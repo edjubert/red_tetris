@@ -1,0 +1,15 @@
+services:
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    volumes:
+      - ./back/tmp/npm:/root/.npm:z
+      - ./back/src:/app:z
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    volumes:
+      - ./front/tmp/npm:/root/./npm:z
+      - ./front/src:/app:z
