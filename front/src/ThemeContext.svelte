@@ -6,7 +6,7 @@
 	import type { Theme as ThemeType } from '$lib/themes'
 
 	export let themes = [..._themes]
-	let _current = themes[0].name
+	let _current = themes[themes.length - 1].name
 
 	const getCurrentTheme = (name: string) => themes.find((h: ThemeType) => h.name === name)
 	const Theme = writable(getCurrentTheme(_current))
