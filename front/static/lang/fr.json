@@ -1,0 +1,11 @@
+{
+  "home": {
+    "topic": "Red Tetris",
+    "subtopic": "Un tetris multijoueur écrit avec Svelte",
+    "username": "pseudo",
+    "play": "JOUER"
+  },
+  "header": {
+    "home": "Accueil"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "home": {
+    "topic": "Red Tetris",
+    "subtopic": "A multiplayer tetris made with Svelte",
+    "username": "username",
+    "play": "PLAY"
+  },
+  "header": {
+    "home": "home"
+  }
+}

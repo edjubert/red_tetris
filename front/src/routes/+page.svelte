@@ -4,49 +4,54 @@
 
 	import { user } from "$lib/user";
 	import Input from '$lib/Input.svelte';
-	import ThemeContext from '../ThemeContext.svelte';
-	import ThemeToggle from '../ThemeToggle.svelte';
+	import { setupI18n, _, isLocaleLoaded } from '../services/i18n';
 
 	let userinput: Input
 
 	onMount(() => {
-		userinput.focus();
+		if (!$isLocaleLoaded) {
+			setupI18n()
+		}
+
+		userinput?.focus();
 		userinput.setValue($user);
 		userinput.setError(history.state.userNameError);
 	})
+
 </script>
 
 <main class="main">
+	{#if $isLocaleLoaded}
+		<form class="card" on:submit={e => {
+		e.preventDefault();
 
-	<form class="card" on:submit={e => {
-	e.preventDefault();
+		if (!userinput.ok()) {
+			return
+		}
 
-	if (!userinput.ok()) {
-		return
-	}
+		user.set(userinput.getValue());
+		goto('/rooms');
+	}}>
+			<h2>{$_('home.username')}</h2>
 
-	user.set(userinput.getValue());
-	goto('/rooms');
-}}>
-		<h2>username</h2>
-
-		<Input
-			bind:this={userinput}
-			maxlength="16"
-			placeholder="Username"
-			verify={(value) => {
-			if (!value.trim()) {
-				return 'username required'
-			}
-
-			if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
-				return 'username bad format'
+			<Input
+				bind:this={userinput}
+				maxlength="16"
+				placeholder={$_('home.username')}
+				verify={(value) => {
+				if (!value.trim()) {
+					return 'username required'
 				}
-		}}
-		/>
 
-		<button class="red-button">PLAY</button>
-	</form>
+				if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
+					return 'username bad format'
+					}
+			}}
+			/>
+
+			<button class="red-button">{$_('home.play')}</button>
+		</form>
+	{/if}
 </main>
 
 <style lang="css">
