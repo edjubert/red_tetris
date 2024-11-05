@@ -4,6 +4,8 @@
 
 	import { user } from "$lib/user";
 	import Input from '$lib/Input.svelte';
+	import ThemeContext from '../ThemeContext.svelte';
+	import ThemeToggle from '../ThemeToggle.svelte';
 
 	let userinput: Input
 
@@ -15,20 +17,17 @@
 </script>
 
 <main class="main">
-	<a href="/" id="logo">
-		<img alt="logo" src="/red-tetris.png">
-	</a>
 
 	<form class="card" on:submit={e => {
-		e.preventDefault();
+	e.preventDefault();
 
-		if (!userinput.ok()) {
-			return
-		}
+	if (!userinput.ok()) {
+		return
+	}
 
-		user.set(userinput.getValue());
-		goto('/rooms');
-	}}>
+	user.set(userinput.getValue());
+	goto('/rooms');
+}}>
 		<h2>username</h2>
 
 		<Input
@@ -36,14 +35,14 @@
 			maxlength="16"
 			placeholder="Username"
 			verify={(value) => {
-				if (!value.trim()) {
-					return 'username required'
-				}
+			if (!value.trim()) {
+				return 'username required'
+			}
 
-				if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
-					return 'username bad format'
-					}
-			}}
+			if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
+				return 'username bad format'
+				}
+		}}
 		/>
 
 		<button class="red-button">PLAY</button>
@@ -51,8 +50,13 @@
 </main>
 
 <style lang="css">
-	#logo img {
-			width: 100px;
-			height: 100px;
-	}
+		:global(html) {
+				background-color: var(--theme-base);
+				color: var(--theme-text);
+		}
+
+		main {
+				font-family: sans-serif;
+				text-align: center;
+		}
 </style>
