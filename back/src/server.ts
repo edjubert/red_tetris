@@ -1,22 +1,21 @@
-import express from 'express';
-import http from 'http';
 import { Server } from 'socket.io';
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server({
+	cors: {
+		origin: 'http://localhost:5173'
+	}
+});
 
 const PORT = 3000;
 
-server.listen(PORT, () => {
-	console.log(`Server listening on port ${PORT}`);
-});
-
 io.on('connection', (socket) => {
-	console.log('A user connected');
+	console.log('A user connected', socket.client);
 
+	const messages: string[] = [];
 	socket.on('message', (data) => {
 		console.log(`Message received: ${data}`);
+		messages.push(data)
+		console.log({messages})
 		io.emit('message', data); // Broadcast the message to all connected clients
 	});
 
@@ -24,3 +23,5 @@ io.on('connection', (socket) => {
 		console.log('User disconnected');
 	});
 });
+
+io.listen(PORT);
