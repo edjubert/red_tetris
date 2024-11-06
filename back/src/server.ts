@@ -1,4 +1,13 @@
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import pino from 'pino';
+
+const logger = pino({
+	transport: {
+		target: 'pino-pretty'
+	}
+})
+
+
 
 const io = new Server({
 	cors: {
@@ -6,22 +15,40 @@ const io = new Server({
 	}
 });
 
-const PORT = 3000;
+const PORT = 4000;
+
+type Room = {name: string, val: {started: boolean, players: string[]}}
+const rooms: Room[] = [];
+
+const getRoomList = (socket: Socket) => ()  => {
+		let roomList = [];
+
+		for (let {name, val} of rooms) {
+			if (!val.started) {
+				roomList.push({ name, nb: val.players.length });
+			}
+		}
+
+		socket.emit('roomList', roomList);
+}
+
+const disconnect = (socket: Socket) => () => {
+	socket.on('disconnect', () => {})
+}
+
+const handlers = (socket: Socket) => {
+	return {
+		getRoomList: getRoomList(socket),
+		disconnect: disconnect(socket)
+	}
+}
 
 io.on('connection', (socket) => {
-	console.log('A user connected', socket.client);
+	logger.info('User connected')
+	const h = handlers(socket);
 
-	const messages: string[] = [];
-	socket.on('message', (data) => {
-		console.log(`Message received: ${data}`);
-		messages.push(data)
-		console.log({messages})
-		io.emit('message', data); // Broadcast the message to all connected clients
-	});
-
-	socket.on('disconnect', () => {
-		console.log('User disconnected');
-	});
+	socket.on('getRoomList', h.getRoomList);
+	socket.on('disconnect', h.disconnect);
 });
 
 io.listen(PORT);
