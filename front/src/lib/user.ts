@@ -21,14 +21,14 @@ function writableLocalStorage(writable: Writable<string>, key: string) {
 
 		localStorage.setItem(key, value);
 	});
+}
 
-	if (browser) {
-		writableLocalStorage(user as Writable<never>, 'user');
-		writableLocalStorage(muted as Writable<never>, 'muted');
+if (browser) {
+	writableLocalStorage(user as Writable<never>, 'user');
+	writableLocalStorage(muted as Writable<never>, 'muted');
 
-		socket = io('/');
-		socket.on('connect', () => connected.set(true));
-		socket.on('connect_error', () => connected.set(false));
-		socket.on('disconnect', () => connected.set(false));
-	}
+	socket = io('http://localhost:4000');
+	socket.on('connect', () => connected.set(true));
+	socket.on('connect_error', () => connected.set(false));
+	socket.on('disconnect', () => connected.set(false));
 }
