@@ -31,10 +31,12 @@
 </script>
 
 <ThemeContext>
-	<a href="/" id="logo">
-		<img alt="logo" src="/red-tetris.png" />
-	</a>
-	<ThemeToggle />
+	<main>
+		<a href="/" id="logo">
+			<img alt="logo" src="/red-tetris.png" />
+		</a>
+		<ThemeToggle />
+	</main>
 </ThemeContext>
 
 <slot />
@@ -43,6 +45,12 @@
 {/if}
 
 <style lang="css">
+	main {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+	}
+
 	.disconnected {
 		position: fixed;
 		width: 100%;

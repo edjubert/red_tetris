@@ -3,9 +3,13 @@
     "topic": "Red Tetris",
     "subtopic": "Un tetris multijoueur écrit avec Svelte",
     "username": "pseudo",
+    "roomname": "nom salle",
     "play": "JOUER"
   },
   "header": {
     "home": "Accueil"
+  },
+  "room": {
+    "start": "Commencer"
   }
 }

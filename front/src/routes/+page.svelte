@@ -2,29 +2,34 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	import { user } from '$lib/user';
+	import { user, room } from '$lib/user';
 	import Input from '$lib/Input.svelte';
 	import { setupI18n, _, isLocaleLoaded } from '../services/i18n';
 
 	let userinput: any;
+	let roomname: any;
 
 	onMount(() => {
 		if (!$isLocaleLoaded) {
 			setupI18n();
 		}
 
-		userinput.focus?.();
-		userinput.setValue?.($user);
-		userinput.setError?.(history.state.userNameError);
+		userinput?.focus?.();
+		userinput?.setValue?.($user);
+		userinput?.setError?.(history.state.userNameError);
+
+		roomname?.focus?.();
+		roomname?.setValue?.($room);
+		roomname?.setError?.(history.state.roomNameError);
 	});
 
 	const verifyInput = (value: string) => {
 		if (!value.trim()) {
-			return 'username required';
+			return 'field required';
 		}
 
 		if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
-			return 'username bad format';
+			return 'bad format';
 		}
 	};
 </script>
@@ -36,17 +41,15 @@
 			on:submit={(e) => {
 				e.preventDefault();
 
-				console.log({ userinput, isOk: userinput.ok?.() });
-				if (!userinput.ok?.()) {
+				if (!userinput.ok?.() || !roomname.ok?.()) {
 					return;
 				}
 
 				user.set(userinput.getValue());
-				goto('/rooms');
+				room.set(roomname.getValue());
+				goto(`/${roomname.getValue()}/${userinput.getValue()}`, { replaceState: true });
 			}}
 		>
-			<h2>{$_('home.username')}</h2>
-
 			<Input
 				bind:this={userinput}
 				maxlength="16"
@@ -54,7 +57,14 @@
 				verify={verifyInput}
 			/>
 
-			<button class="red-button">{$_('home.play')}</button>
+			<Input
+				bind:this={roomname}
+				maxlength="16"
+				placeholder={$_('home.roomname')}
+				verify={verifyInput}
+			/>
+
+			<button class="button">{$_('home.play')}</button>
 		</form>
 	{/if}
 </main>
@@ -68,5 +78,13 @@
 	main {
 		font-family: sans-serif;
 		text-align: center;
+	}
+
+	.button {
+		padding: 10px;
+		width: 200px;
+		border: none;
+		background-color: var(--theme-teal);
+		border-radius: 5px;
 	}
 </style>

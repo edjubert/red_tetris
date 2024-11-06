@@ -17,38 +17,50 @@ const io = new Server({
 
 const PORT = 4000;
 
-type Room = {name: string, val: {started: boolean, players: string[]}}
+type Room = {name: string, started: boolean, players: string[], owner: string}
 const rooms: Room[] = [];
-
-const getRoomList = (socket: Socket) => ()  => {
-		let roomList = [];
-
-		for (let {name, val} of rooms) {
-			if (!val.started) {
-				roomList.push({ name, nb: val.players.length });
-			}
-		}
-
-		socket.emit('roomList', roomList);
-}
 
 const disconnect = (socket: Socket) => () => {
 	socket.on('disconnect', () => {})
 }
 
-const handlers = (socket: Socket) => {
-	return {
-		getRoomList: getRoomList(socket),
-		disconnect: disconnect(socket)
-	}
-}
-
 io.on('connection', (socket) => {
 	logger.info('User connected')
-	const h = handlers(socket);
 
-	socket.on('getRoomList', h.getRoomList);
-	socket.on('disconnect', h.disconnect);
+	socket.on('initGame', (roomName: string) => {
+		const _current = rooms.findIndex((r: Room) => r.name === roomName);
+		rooms[_current] = {...rooms[_current], started: true};
+		io.emit(`roomData:${roomName}`, rooms[_current]);
+	});
+
+	socket.on('getRoomData', (roomName: string, userName:string) => {
+		const _current = rooms.find((r: Room) => r.name === roomName);
+		const _currentIdx = rooms.findIndex((r: Room) => r.name === roomName)
+		if (_currentIdx === -1) {
+			const room:Room = {
+				name: roomName,
+				owner: userName,
+				players: [userName],
+				started: false
+			}
+
+			rooms.push(room)
+			socket.emit(`roomData:${roomName}`, room);
+		} else if (_current?.players.findIndex(p => p === userName) === -1) {
+			console.log({started: _current?.started, players: _current?.players});
+			if (_current?.started || _current?.players.length >= 2) {
+				socket.emit(`unauthorized:${roomName}`)
+			} else {
+				const room:Room = {..._current, players: [..._current?.players || [], userName]};
+				io.emit(`roomData:${roomName}`, room);
+			}
+		} else {
+			io.emit(`roomData:${roomName}`, _current)
+		}
+	});
+	socket.on('disconnect', () => {
+
+	});
 });
 
 io.listen(PORT);

@@ -20,7 +20,6 @@ const setupI18n = async () => {
 
 	const response = await fetch(messagesFileUrl);
 	const messages = await response.json();
-	console.log({ messages, _locale });
 	dictionary.set({ [_locale]: messages });
 	locale.set(_locale);
 };

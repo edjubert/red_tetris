@@ -3,9 +3,13 @@
     "topic": "Red Tetris",
     "subtopic": "A multiplayer tetris made with Svelte",
     "username": "username",
+    "roomname": "room name",
     "play": "PLAY"
   },
   "header": {
     "home": "home"
+  },
+  "room": {
+    "start": "start"
   }
 }

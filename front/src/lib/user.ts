@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import type { Socket } from 'socket.io-client';
 
 export const user: Writable<string> = writable();
+export const room: Writable<string> = writable();
 export const connected: Writable<boolean> = writable(true);
 export let socket: Socket;
 export const muted: Writable<boolean> = writable(false);
@@ -25,6 +26,7 @@ function writableLocalStorage(writable: Writable<string>, key: string) {
 
 if (browser) {
 	writableLocalStorage(user as Writable<never>, 'user');
+	writableLocalStorage(room as Writable<never>, 'room');
 	writableLocalStorage(muted as Writable<never>, 'muted');
 
 	socket = io('http://localhost:4000');
