@@ -1,13 +1,20 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { afterNavigate, goto } from '$app/navigation';
 
 	import { user, connected } from '$lib/user'
 	import ThemeToggle from '../ThemeToggle.svelte';
 	import ThemeContext from '../ThemeContext.svelte';
+	import { setupI18n, isLocaleLoaded } from '../services/i18n';
 
 	let theme = getContext('theme');
+
+	onMount(() => {
+		if (!$isLocaleLoaded) {
+			setupI18n()
+		}
+	})
 
 	if (browser) {
 		const checkPage = () => {

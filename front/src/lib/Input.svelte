@@ -5,7 +5,7 @@
 	let error: Error
 	let value = '';
 
-	const ok = (): boolean => {
+	export const ok = (): boolean => {
 		error = verify(getValue());
 		if (!error) {
 			return true
@@ -15,19 +15,19 @@
 		return false
 	}
 
-	const setError = (_error: Error): void => {
+	export const setError = (_error: Error): void => {
 		error = _error
 	}
 
-	const getValue = (): string => {
+	export const getValue = (): string => {
 		return value
 	}
 
-	const setValue = (_value: string): void => {
+	export const setValue = (_value: string): void => {
 		value = _value
 	}
 
-	const focus = (): void => {
+	export const focus = (): void => {
 		input.focus();
 	}
 </script>

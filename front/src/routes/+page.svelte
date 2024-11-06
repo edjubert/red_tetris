@@ -6,17 +6,27 @@
 	import Input from '$lib/Input.svelte';
 	import { setupI18n, _, isLocaleLoaded } from '../services/i18n';
 
-	let userinput: Input
+	let userinput: any
 
 	onMount(() => {
 		if (!$isLocaleLoaded) {
 			setupI18n()
 		}
 
-		userinput?.focus();
-		userinput.setValue($user);
-		userinput.setError(history.state.userNameError);
+		userinput.focus?.();
+		userinput.setValue?.($user);
+		userinput.setError?.(history.state.userNameError);
 	})
+
+	const verifyInput =(value:string) => {
+				if (!value.trim()) {
+					return 'username required'
+				}
+
+				if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
+					return 'username bad format'
+					}
+			}
 
 </script>
 
@@ -25,7 +35,8 @@
 		<form class="card" on:submit={e => {
 		e.preventDefault();
 
-		if (!userinput.ok()) {
+		console.log({userinput, isOk: userinput.ok?.()})
+		if (!userinput.ok?.()) {
 			return
 		}
 
@@ -38,15 +49,7 @@
 				bind:this={userinput}
 				maxlength="16"
 				placeholder={$_('home.username')}
-				verify={(value) => {
-				if (!value.trim()) {
-					return 'username required'
-				}
-
-				if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
-					return 'username bad format'
-					}
-			}}
+				verify={verifyInput}
 			/>
 
 			<button class="red-button">{$_('home.play')}</button>
@@ -55,13 +58,13 @@
 </main>
 
 <style lang="css">
-		:global(html) {
-				background-color: var(--theme-base);
-				color: var(--theme-text);
-		}
+    :global(html) {
+        background-color: var(--theme-base);
+        color: var(--theme-text);
+    }
 
-		main {
-				font-family: sans-serif;
-				text-align: center;
-		}
+    main {
+        font-family: sans-serif;
+        text-align: center;
+    }
 </style>
