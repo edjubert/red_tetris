@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { afterNavigate, goto } from '$app/navigation';
 
 	import { user, connected } from '$lib/user';
 	import ThemeToggle from '../ThemeToggle.svelte';
 	import ThemeContext from '../ThemeContext.svelte';
-	import { setupI18n, isLocaleLoaded } from '../services/i18n';
-
-	let theme = getContext('theme');
+	import { setupI18n, isLocaleLoaded, _ } from '../services/i18n';
 
 	onMount(() => {
 		if (!$isLocaleLoaded) {
@@ -41,7 +39,7 @@
 
 <slot />
 {#if !$connected}
-	<div class="disconnected">DISCONNECTED</div>
+	<div class="disconnected">{$_('layout.disconnected')}</div>
 {/if}
 
 <style lang="css">
@@ -56,7 +54,7 @@
 	}
 
 	#logo img {
-		width: 100px;
-		height: 100px;
+		width: 50px;
+		height: 50px;
 	}
 </style>

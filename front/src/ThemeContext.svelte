@@ -2,7 +2,7 @@
 	import { setContext, onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	import { theme as _themes } from '$lib/themes';
+	import { catppuccinThemes as _themes, DEFAULT_THEME } from '$lib/themes';
 	import type { Theme as ThemeType } from '$lib/themes';
 
 	export let themes = [..._themes];
@@ -12,11 +12,12 @@
 	const Theme = writable(getCurrentTheme(_current));
 	setContext('theme', {
 		theme: Theme,
-		toggle: () => {
-			let _currentIndex = themes.findIndex((h: ThemeType) => h.name === _current);
-			_current = themes[_currentIndex === themes.length - 1 ? 0 : (_currentIndex += 1)].name;
-			Theme.update((t) => ({ ...t, ...getCurrentTheme(_current) }));
-			setRootColors(getCurrentTheme(_current));
+		setTheme: (name: string) => {
+			const _current: string = getCurrentTheme(name) ? name : DEFAULT_THEME;
+			const newTheme = getCurrentTheme(_current);
+
+			Theme.update((t) => ({ ...t, ...newTheme }));
+			setRootColors(newTheme);
 		}
 	});
 

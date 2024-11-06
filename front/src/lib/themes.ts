@@ -29,7 +29,8 @@ export type Theme = {
 		crust: string;
 	};
 };
-export const theme: Theme[] = [
+export const DEFAULT_THEME = 'mocha';
+export const catppuccinThemes: Theme[] = [
 	{
 		name: 'latte',
 		colors: {
