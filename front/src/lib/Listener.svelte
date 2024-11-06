@@ -7,10 +7,10 @@
 
 	export let on: string;
 
-	export let handler: (list: Room[] | AllScore) => void
+	export let handler: (list: Room[] | AllScore) => void;
 
 	let old_on: string;
-	let w_on = writable<string>()
+	let w_on = writable<string>();
 
 	$: w_on.set(on);
 
@@ -24,7 +24,7 @@
 
 			return () => {
 				socket.removeListener(old_on, handler);
-			}
-		})
+			};
+		});
 	}
 </script>

@@ -1,35 +1,35 @@
 <script lang="ts">
-	export let verify, placeholder, maxlength
+	export let verify, placeholder, maxlength;
 
-	let input: HTMLInputElement
-	let error: Error
+	let input: HTMLInputElement;
+	let error: Error;
 	let value = '';
 
 	export const ok = (): boolean => {
 		error = verify(getValue());
 		if (!error) {
-			return true
+			return true;
 		}
 
-		input.animate([], {duration: 400})
-		return false
-	}
+		input.animate([], { duration: 400 });
+		return false;
+	};
 
 	export const setError = (_error: Error): void => {
-		error = _error
-	}
+		error = _error;
+	};
 
 	export const getValue = (): string => {
-		return value
-	}
+		return value;
+	};
 
 	export const setValue = (_value: string): void => {
-		value = _value
-	}
+		value = _value;
+	};
 
 	export const focus = (): void => {
 		input.focus();
-	}
+	};
 </script>
 
 <div>
@@ -38,16 +38,16 @@
 	{/if}
 	<input
 		bind:this={input}
-		bind:value={value}
+		bind:value
 		class="red-input"
 		{maxlength}
 		on:input={async (e) => {
 			if (!e.target) {
-				error = new Error("no target")
+				error = new Error('no target');
 			}
 			const { value } = e.target as HTMLInputElement;
 			error = verify(value);
 		}}
 		{placeholder}
-	>
+	/>
 </div>
