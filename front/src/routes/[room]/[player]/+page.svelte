@@ -6,6 +6,7 @@
 	import type { Room } from '$lib/types';
 	import { _ } from '../../../services/i18n';
 	import { goto } from '$app/navigation';
+	import Game from "../../../components/Game.svelte";
 
 	let roomData = $state<Room>();
 	let { data }: { data: PageData } = $props();
@@ -30,7 +31,7 @@
 	handler={() => {
 		goto('/');
 	}}
-	on="unauthorized:{data.room}"
+	on="unauthorized:{data.room}:{socket?.id}"
 />
 
 {#if !roomData?.started}
@@ -56,7 +57,5 @@
 		</div>
 	{/if}
 {:else}
-	<div class="game">
-		<p>YEAH it begins</p>
-	</div>
+	<Game />
 {/if}

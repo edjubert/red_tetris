@@ -20,10 +20,6 @@ const PORT = 4000;
 type Room = {name: string, started: boolean, players: string[], owner: string}
 const rooms: Room[] = [];
 
-const disconnect = (socket: Socket) => () => {
-	socket.on('disconnect', () => {})
-}
-
 io.on('connection', (socket) => {
 	logger.info('User connected')
 
@@ -47,7 +43,6 @@ io.on('connection', (socket) => {
 			rooms.push(room)
 			socket.emit(`roomData:${roomName}`, room);
 		} else if (_current?.players.findIndex(p => p === userName) === -1) {
-			console.log({started: _current?.started, players: _current?.players});
 			if (_current?.started || _current?.players.length >= 2) {
 				socket.emit(`unauthorized:${roomName}`)
 			} else {
@@ -55,11 +50,11 @@ io.on('connection', (socket) => {
 				io.emit(`roomData:${roomName}`, room);
 			}
 		} else {
-			io.emit(`roomData:${roomName}`, _current)
+			io.emit(`unauthorized:${roomName}:${socket.id}`)
 		}
 	});
 	socket.on('disconnect', () => {
-
+		logger.info({socket: socket.id})
 	});
 });
 
