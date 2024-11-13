@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "esNext",
     "allowJs": false,
     "checkJs": false,
     "esModuleInterop": true,
