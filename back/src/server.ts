@@ -1,5 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import pino from 'pino';
+import { Game } from './Game';
+import { Client } from './Client';
 
 const logger = pino({
 	transport: {
@@ -17,44 +19,48 @@ const io = new Server({
 
 const PORT = 4000;
 
-type Room = {name: string, started: boolean, players: string[], owner: string}
-const rooms: Room[] = [];
+type Room = {
+	name: string,
+	started: boolean,
+	players: string[],
+	owner: string
+}
+let rooms = new Map<string, Game>();
 
 io.on('connection', (socket) => {
 	logger.info('User connected')
 
-	socket.on('initGame', (roomName: string) => {
-		const _current = rooms.findIndex((r: Room) => r.name === roomName);
-		rooms[_current] = {...rooms[_current], started: true};
-		io.emit(`roomData:${roomName}`, rooms[_current]);
-	});
-
 	socket.on('getRoomData', (roomName: string, userName:string) => {
-		const _current = rooms.find((r: Room) => r.name === roomName);
-		const _currentIdx = rooms.findIndex((r: Room) => r.name === roomName)
-		if (_currentIdx === -1) {
-			const room:Room = {
-				name: roomName,
-				owner: userName,
-				players: [userName],
-				started: false
-			}
-
-			rooms.push(room)
-			socket.emit(`roomData:${roomName}`, room);
-		} else if (_current?.players.findIndex(p => p === userName) === -1) {
-			if (_current?.started || _current?.players.length >= 2) {
-				socket.emit(`unauthorized:${roomName}`)
-			} else {
-				const room:Room = {..._current, players: [..._current?.players || [], userName]};
-				io.emit(`roomData:${roomName}`, room);
-			}
-		} else {
-			io.emit(`unauthorized:${roomName}:${socket.id}`)
+		if (!/^[a-z0-9_-]{1,16}$/i.test(userName) || userName === undefined)
+		{
+			socket.emit('userNameError', `username required`);
+			return ;
 		}
-	});
-	socket.on('disconnect', () => {
-		logger.info({socket: socket.id})
+		if (!/^[a-z0-9_-]{1,16}$/i.test(roomName))
+		{
+			socket.emit('roomNameError', `invalid roomname`);
+			return ;
+		}
+
+		if (!rooms.has(roomName)) {
+			rooms.set(roomName, new Game(io, roomName))
+		}
+
+		const room = rooms.get(roomName);
+		if (room?.started === true) {
+			socket.emit('roomNameError', `room '${roomName}' is already started`);
+			return;
+		}
+
+		const client = new Client(socket);
+		const removePlayer = () => {
+			room?.removePlayer(client);
+
+			if (room?.players.size === 0) {
+				room.stopInterval();
+				rooms.delete(roomName);
+			}
+		}
 	});
 });
 
