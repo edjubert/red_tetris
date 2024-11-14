@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 import { Client } from './Client';
 import { Piece } from './Piece';
 import { Sequence } from './Sequence';
-import { Board, Sound } from '../utils/constants';
+import { Board, CLIENT_EVENTS, Sound } from '../utils/constants';
 
 function emptyBoard(): number[][] {
 	return new Array(20).fill(new Array(10).fill(0));
@@ -152,7 +152,7 @@ export class Player {
 			return 20;
 		})
 
-		this.client.in(`${this.room.name}+human`).emit(`gameInfo:${this.room.name}`, {
+		this.client.in(`${this.room.name}+human`).emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 			clientId: this.client.id,
 			heights,
 			username: this.name,
@@ -166,7 +166,7 @@ export class Player {
 	sendGameData(): void {
 		const nextShape = this.sequence.get(this.currentShapeIndex);
 
-		this.client.emit(`gameInfo:${this.room.name}`, {
+		this.client.emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 			clientId: this.client.id,
 			currentShape: this.currentShape,
 			nextShape,
@@ -192,7 +192,7 @@ export class Player {
 		if (this.currentShape.intersect(this.layer)) {
 			this.gameover = true;
 			this.currentShape = undefined;
-			this.io.in(this.room.name).emit(`gameInfo:${this.room.name}`, {
+			this.io.in(this.room.name).emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 				clientId: this.client.id,
 				gameover: true,
 			});

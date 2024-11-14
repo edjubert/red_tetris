@@ -25,7 +25,8 @@ export const CLIENT_EVENTS = {
 	END_GAME: 'endgame',
 	GAME_MODE: 'gameMode',
 	LEAVE: 'leaveRoom',
-	DISCONNECT: 'disconnect'
+	DISCONNECT: 'disconnect',
+	GAME_INFO: 'gameInfo',
 }
 
 export const HUMAN_PREFIX = '+human'

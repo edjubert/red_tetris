@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation';
 	import LevelSelection from './LevelSelection.svelte';
 	import Game from './Game.svelte';
+	import type { ListenerHandler, Room } from '$lib/types';
 
 	const { data } = $props();
 	let users = $state<string[]>([]);
@@ -18,63 +19,51 @@
 		if (browser) socket.emit(`gameMode:${data.room}`, gameMode);
 	};
 
-	const joinRoom = (): void => {
+	const handleJoinRoom = (): void => {
 		if ($user !== data.player) goto('/', { state: { usernameError: 'username mismatch' } });
 		socket.emit('joinRoom', { roomname: data.room, user: $user, isBot: false });
 		syncGameMode(undefined);
 	};
 
+	const handleRoomnameError = (roomnameError: ListenerHandler) => {
+		goto('/rooms', { state: { roomnameError } });
+	};
+
+	const handleUsernameError = (usernameError: ListenerHandler) => {
+		goto('/rooms', { state: { usernameError } });
+	};
+
+	const handleJoin = (_users: ListenerHandler) => {
+		users = (_users as Room).players;
+	};
+
+	const handleGameMode = (_gameMode: ListenerHandler) => {
+		gameMode = (_gameMode as Room).gameMode;
+	};
+
+	const handleStart = () => {
+		started = true;
+	};
+
+	const handleOwner = () => {
+		owner = true;
+	};
+
 	onMount(() => {
-		if (browser) joinRoom();
+		if (browser) handleJoinRoom();
 		return () => {
 			owner = false;
 		};
 	});
 </script>
 
-<Listener
-	handler={(roomnameError) => {
-		goto('/rooms', { state: { roomnameError } });
-	}}
-	on="roomnameError"
-/>
-
-<Listener
-	handler={(usernameError) => {
-		goto('/', { state: { usernameError } });
-	}}
-	on="usernameError"
-/>
-
-<Listener
-	handler={(_users) => {
-		users = _users.players;
-	}}
-	on="join:{data.room}"
-/>
-
-<Listener
-	handler={() => {
-		started = true;
-	}}
-	on="start:{data.room}"
-/>
-
-<Listener handler={joinRoom} on="connect" />
-
-<Listener
-	handler={(_gameMode) => {
-		gameMode = _gameMode.gameMode;
-	}}
-	on="gameMode:{data.room}"
-/>
-
-<Listener
-	handler={() => {
-		owner = true;
-	}}
-	on="owner:{data.room}"
-/>
+<Listener handler={handleRoomnameError} on="roomnameError" />
+<Listener handler={handleUsernameError} on="usernameError" />
+<Listener handler={handleJoin} on="join:{data.room}" />
+<Listener handler={handleStart} on="start:{data.room}" />
+<Listener handler={handleJoinRoom} on="connect" />
+<Listener handler={handleGameMode} on="gameMode:{data.room}" />
+<Listener handler={handleOwner} on="owner:{data.room}" />
 
 <main>
 	{#if !started}

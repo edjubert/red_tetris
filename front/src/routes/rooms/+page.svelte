@@ -6,14 +6,23 @@
 	import { verifyInput } from '$lib/verifyInput';
 	import { onMount } from 'svelte';
 	import Listener from '$lib/Listener.svelte';
+	import type { ListenerHandler, RoomList, Score, ScoreList } from '$lib/types';
 
-	type Score = { username: string; score: number };
 	let userScores = $state<Score[]>([]);
 	let bestScores = $state<Score[]>([]);
 
 	let roomList = $state<{ name: string; nbOfPlayers: number }[]>([]);
 
 	let roominput: Input;
+
+	const handleScoresList = (scores: ListenerHandler) => {
+		userScores = (scores as ScoreList).userScores;
+		bestScores = (scores as ScoreList).bestScores;
+	};
+
+	const handleRoomList = (_roomList: ListenerHandler) => {
+		roomList = _roomList as RoomList[];
+	};
 
 	onMount(() => {
 		socket.emit('getRoomList');
@@ -24,20 +33,8 @@
 	});
 </script>
 
-<Listener
-	handler={(scores: { userScores: Score[]; bestScores: Score[] }) => {
-		userScores = scores.userScores;
-		bestScores = scores.bestScores;
-	}}
-	on="scoresList"
-/>
-
-<Listener
-	handler={(_roomList: { name: string; nbOfPlayers: number }[]) => {
-		roomList = _roomList;
-	}}
-	on="roomList"
-/>
+<Listener handler={handleScoresList} on="scoresList" />
+<Listener handler={handleRoomList} on="roomList" />
 
 <main class="main">
 	<div class="hflex">

@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import type { GameInfo, ListenerHandler, Score } from '$lib/types';
 
 	export let roomname: string;
 	let usersBoard = new Map();
@@ -28,78 +29,72 @@
 	let endPlayerList: { username: string; score: number }[] = [];
 	let isEndGame = false;
 
-	function initGame() {
+	function handleConnect() {
 		socket.emit('initgame', roomname);
 	}
 
-	function endGame(playerList: { username: string; score: number }[]) {
-		endPlayerList = playerList;
+	const handleEndgame = (playerList: ListenerHandler) => {
+		endPlayerList = playerList as Score[];
 		isEndGame = true;
-	}
+	};
+
+	const handleOwner = () => (owner = true);
+	const handleNotAuthorized = () => {
+		goto('/rooms');
+	};
+	const handleRestart = () => {
+		goto(`${roomname}/${$user}`);
+	};
+
+	const handleGameInfo = (data: ListenerHandler) => {
+		const gameInfo = data as GameInfo;
+		if (gameInfo.clientId === socket.id) {
+			if (gameInfo.gameover) gameover = true;
+			else {
+				indestructibleLines = gameInfo.indestrutibleLines;
+				board = gameInfo.board;
+				score = gameInfo.scores.score;
+				lines = gameInfo.scores.lines;
+				nextShape = gameInfo.nextShape;
+			}
+		} else {
+			if (gameInfo.gameover) {
+				usersBoard.set(gameInfo.clientId, {
+					...usersBoard.get(gameInfo.clientId),
+					gameover: true
+				});
+			} else {
+				usersBoard.set(gameInfo.clientId, {
+					username: gameInfo.username,
+					heights: gameInfo.heights,
+					scores: gameInfo.scores
+				});
+			}
+			usersBoard = usersBoard;
+		}
+	};
+
+	const handleSound = (track: ListenerHandler) => {
+		if (browser && !$muted) {
+			new window.Audio(`/sound/${track}.wav`).play();
+		}
+	};
 
 	onMount(() => {
 		if (!roomname) goto('/rooms');
-		initGame();
+		handleConnect();
 	});
 </script>
 
 <svelte:window on:keydown={(e) => socket.emit(`event:${roomname}`, e.key)} />
 
-<Listener on="owner:{roomname}" handler={() => (owner = true)} />
-
-<Listener
-	on="notauthorized:{roomname}"
-	handler={() => {
-		goto('/rooms');
-	}}
-/>
-
-<Listener on="connect" handler={initGame} />
-<Listener on="endgame:{roomname}" handler={endGame} />/
-<Listener
-	on="restart:{roomname}"
-	handler={() => {
-		goto(`${roomname}/${$user}`);
-	}}
-/>
-<Listener
-	on="gameInfo:{roomname}"
-	handler={(data) => {
-		if (data.clientId === socket.id) {
-			if (data.gameover) gameover = true;
-			else {
-				indestructibleLines = data.indestrutibleLines;
-				board = data.board;
-				score = data.scores.score;
-				lines = data.scores.lines;
-				nextShape = data.nextShape;
-			}
-		} else {
-			if (data.gameover) {
-				usersBoard.set(data.clientId, {
-					...userBoard.get(data.clientId),
-					gameover: true
-				});
-			} else {
-				usersBoard.set(data.clientId, {
-					username: data.username,
-					heights: data.heights,
-					scores: data.scores
-				});
-			}
-			usersBoard = usersBoard;
-		}
-	}}
-/>
-
-<Listener
-	on="sound:{roomname}"
-	handler={(track: string) => {
-		if (browser && !$muted) {
-			new window.Audio(`/sound/${track}.wav`).play();
-		}
-	}}
-/>
+<Listener on="owner:{roomname}" handler={handleOwner} />
+<Listener on="notauthorized:{roomname}" handler={handleNotAuthorized} />
+<Listener on="connect" handler={handleConnect} />
+<Listener on="endgame:{roomname}" handler={handleEndgame} />/
+<Listener on="restart:{roomname}" handler={handleRestart} />
+<Listener on="gameInfo:{roomname}" handler={handleGameInfo} />
+<Listener on="sound:{roomname}" handler={handleSound} />
 
 <main>
 	<button class="mute-button" on:click={() => muted.set(!$muted)}>

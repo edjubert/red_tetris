@@ -3,11 +3,11 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { socket } from '$lib/user';
-	import type { Room } from '$lib/types';
+	import type { ListenerHandler } from '$lib/types';
 
 	export let on: string;
 
-	export let handler: (room: Room) => void;
+	export let handler: (room: ListenerHandler) => void;
 
 	let old_on: string;
 	let w_on = writable<string>();
