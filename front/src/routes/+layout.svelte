@@ -1,19 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { afterNavigate, goto } from '$app/navigation';
 
 	import { user, connected } from '$lib/user';
 	import ThemeToggle from '../ThemeToggle.svelte';
 	import ThemeContext from '../ThemeContext.svelte';
-	import { setupI18n, isLocaleLoaded, _ } from '../services/i18n';
+	import { setupI18n, _ } from '../services/i18n';
 	import '$lib/style.css';
 
-	// onMount(() => {
-	// 	if (!$isLocaleLoaded) {
-	// 		setupI18n();
-	// 	}
-	// });
 	async function setup() {
 		console.log('setup');
 		return await Promise.allSettled([setupI18n()]);
@@ -62,7 +56,10 @@
 	}
 	.top-navigation {
 		display: flex;
-		position: absolute;
+		position: fixed;
+		background-color: var(--theme-base);
+		border-bottom: 1px solid var(--theme-base);
+		box-shadow: 0 0 40px 30px var(--theme-base);
 		top: 0;
 		padding: 10px;
 		width: 100%;

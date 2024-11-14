@@ -5,6 +5,7 @@ import { Client } from './Client';
 import { Player } from './Player';
 import { Room } from '../utils/types';
 import { CLIENT_EVENTS, IO_EVENTS, SOCKET_EVENTS } from '../utils/constants';
+import { inspect } from 'node:util';
 
 const logger = pino({
 	transport: {
@@ -27,12 +28,13 @@ let rooms = new Map<string, Game>();
 io.on(IO_EVENTS.CONNECTION, (socket) => {
 	logger.info('User connected')
 
-	socket.on(SOCKET_EVENTS.INIT_GAME, (roomname: string): void => {
+	socket.on(SOCKET_EVENTS.INIT_GAME, ({roomname}:{roomname: string}): void => {
+		logger.info(`init game ${roomname}`)
 		const currentRoom = rooms.get(roomname);
 		if (currentRoom === undefined || !currentRoom?.players.has(socket.id)) socket.emit(`${SOCKET_EVENTS.ERR_NOT_AUTHORIZED}:${roomname}`)
 	})
 
-	socket.on(SOCKET_EVENTS.JOIN_ROOM, (roomname: string, user:string, isBot: boolean = false) => {
+	socket.on(SOCKET_EVENTS.JOIN_ROOM, ({roomname, user, isBot = false}: {roomname: string; user: string; isBot: boolean}) => {
 		logger.info(`some info ${SOCKET_EVENTS.JOIN_ROOM}, ${roomname}, ${user}, ${isBot}`)
 		if (!/^[a-z0-9_-]{1,16}$/i.test(user) || user === undefined)
 		{

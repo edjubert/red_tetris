@@ -1,32 +1,28 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { socket } from '$lib/user';
-	import Listener from '$lib/Listener.svelte';
-	import type { PageData } from './$types';
-	import type { Room } from '$lib/types';
-	import { _ } from '../../../services/i18n';
-	import { goto } from '$app/navigation';
-	import Game from '../../../components/Game.svelte';
 	import { browser } from '$app/environment';
+	import { _ } from '../../../services/i18n';
+	import { socket, user } from '$lib/user';
+	import { onMount } from 'svelte';
+	import Listener from '$lib/Listener.svelte';
+	import { goto } from '$app/navigation';
 
-	let roomData = $state<Room>();
-	let owner = false;
-	let { data }: { data: PageData } = $props();
-
-	const initGame = (): void => {
-		socket.emit('initGame', data.room);
-	};
+	let roomname: string = '';
+	let users: any[] = [];
+	let owner: boolean = false;
+	let gameMode: string = '';
 
 	const syncGameMode = (gameMode?: string): void => {
-		if (browser) socket.emit(`gameMode:${data.room}`, gameMode);
+		if (browser) socket.emit(`gameMode:${roomname}`, gameMode);
 	};
 
 	const joinRoom = (): void => {
-		socket.emit('joinRoom', { roomname: data.room, user: data.player });
+		console.log({ roomname, user: $user, isBot: false });
+		socket.emit('joinRoom', { roomname, user: $user, isBot: false });
 		syncGameMode(undefined);
 	};
+
 	onMount(() => {
-		// socket.emit('getRoomData', data.room, data.player);
+		roomname = location.hash.slice(1).toLocaleLowerCase();
 		if (browser) joinRoom();
 		return () => {
 			owner = false;
@@ -35,41 +31,121 @@
 </script>
 
 <Listener
-	handler={(_roomData) => {
-		roomData = _roomData;
+	handler={(roomnameError) => {
+		goto('/rooms', { state: { roomnameError } });
 	}}
-	on="roomData:{data.room}"
+	on="roomnameError"
+/>
+
+<Listener
+	handler={(usernameError) => {
+		goto('/', { state: { usernameError } });
+	}}
+	on="usernameError"
+/>
+
+<Listener
+	handler={(_users) => {
+		users = _users.players;
+	}}
+	on="join:{roomname}"
 />
 
 <Listener
 	handler={() => {
-		goto('/');
+		goto('/{roomname}/{$user}');
 	}}
-	on="unauthorized:{data.room}:{socket?.id}"
+	on="start:{roomname}"
 />
 
-{#if !roomData?.started}
-	{#if roomData?.owner === data.player}
-		<div class="owner">
-			<p>Name: {roomData?.name}</p>
-			<p>Owner: {roomData?.owner} YOU</p>
-			<p>Started: {roomData?.started}</p>
-			{#each roomData?.players ?? [] as player}
-				<p>- {player}</p>
-			{/each}
+<Listener handler={joinRoom} on="connect" />
 
-			<button class="start" onclick={initGame}>{$_('room.start')}</button>
-		</div>
-	{:else}
-		<div class="not-empty">
-			<p>Name: {roomData?.name}</p>
-			<p>Owner: {roomData?.owner}</p>
-			<p>Started: {roomData?.started}</p>
-			{#each roomData?.players ?? [] as player}
-				<p>- {player}</p>
+<Listener
+	handler={(_gameMode) => {
+		gameMode = _gameMode.gameMode;
+	}}
+	on="gameMode:{roomname}"
+/>
+
+<Listener
+	handler={() => {
+		owner = true;
+	}}
+	on="owner:{roomname}"
+/>
+
+<main>
+	<div class="card">
+		<h1>{roomname}</h1>
+		{#each users as user}
+			<div>- {user}</div>
+		{/each}
+
+		<div class="action {owner ? '' : 'disabled'}">
+			{#each ['slow', 'medium-slow', 'medium-fast', 'fast'] as action}
+				<input
+					type="radio"
+					id={action}
+					value={action}
+					bind:group={gameMode}
+					name="gameMode"
+					on:change={() => syncGameMode(gameMode)}
+				/>
+
+				<label for={action}>
+					<button class="red-button {action}">
+						<img src="/icons/game-mode/{action}.png" alt={action} />
+					</button>
+				</label>
 			{/each}
 		</div>
+
+		<div class="action">
+			<button
+				class="red-button"
+				on:click={() => {
+					socket.emit('leaveRoom');
+					goto('/rooms');
+				}}
+			>
+				{$_('room.leave')}
+			</button>
+
+			{#if owner}
+				<button class="red-button" on:click={() => socket.emit(`start:${roomname}`)}>
+					{$_('room.start')}
+				</button>
+			{/if}
+		</div>
+	</div>
+
+	{#if !owner}
+		<p>{$_('room.waiting_to_start')}</p>
 	{/if}
-{:else}
-	<Game />
-{/if}
+</main>
+
+<style>
+	input[type='radio'] {
+		display: none;
+	}
+
+	.red-button img {
+		width: 100%;
+	}
+
+	.disabled label {
+		transform: none !important;
+		box-shadow: 8px 8px var(--shadow) !important;
+		cursor: not-allowed;
+	}
+
+	.card:hover {
+		border-color: var(--theme-sapphire);
+	}
+	.action > .red-button:hover {
+		border-color: var(--theme-sapphire);
+	}
+	.action > label > .slow {
+		border-color: var(--theme-sapphire);
+	}
+</style>

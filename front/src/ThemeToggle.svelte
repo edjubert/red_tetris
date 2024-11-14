@@ -25,14 +25,14 @@
 
 <style lang="css">
 	select {
-		border: none;
-		background-color: var(--theme-overlay0);
 		padding: 5px;
-		text-align: center;
 		border-radius: 5px;
 		height: 50%;
 		appearance: none;
 		text-indent: 1px;
 		text-overflow: '';
+	}
+	.red-button:hover {
+		border-color: var(--theme-green);
 	}
 </style>

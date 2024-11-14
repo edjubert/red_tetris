@@ -5,6 +5,7 @@
 	import { user } from '$lib/user';
 	import Input from '$lib/Input.svelte';
 	import { setupI18n, _, isLocaleLoaded } from '../services/i18n';
+	import { verifyInput } from '$lib/verifyInput';
 
 	let userinput: Input;
 
@@ -17,16 +18,6 @@
 		userinput?.setValue?.($user);
 		userinput?.setError?.(history.state.userNameError);
 	});
-
-	const verifyInput = (value: string) => {
-		if (!value.trim()) {
-			return 'field required';
-		}
-
-		if (!/^[a-z0-9_-]*$/i.test(value.trim())) {
-			return 'bad format';
-		}
-	};
 </script>
 
 <main class="main">
@@ -65,5 +56,12 @@
 	main {
 		font-family: sans-serif;
 		text-align: center;
+	}
+
+	.card:hover {
+		border-color: var(--theme-teal);
+	}
+	.card > .red-button:hover {
+		border-color: var(--theme-teal);
 	}
 </style>

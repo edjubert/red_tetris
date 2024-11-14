@@ -39,7 +39,7 @@
 	<input
 		bind:this={input}
 		bind:value
-		class="input"
+		class="red-input"
 		{maxlength}
 		on:input={async (e) => {
 			if (!e.target) {

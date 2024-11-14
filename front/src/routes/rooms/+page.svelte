@@ -1,141 +1,142 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { user, socket } from '$lib/user';
 	import { _ } from '../../services/i18n';
-	import { socket, user } from '$lib/user';
-	import { onMount } from 'svelte';
-	import Listener from '$lib/Listener.svelte';
 	import { goto } from '$app/navigation';
+	import Input from '$lib/Input.svelte';
+	import { verifyInput } from '$lib/verifyInput';
+	import { onMount } from 'svelte';
 
-	let roomname: string = '';
-	let users: any[] = [];
-	let owner: boolean = false;
-	let gameMode: string = '';
+	let userScores: { username: string; score: number }[] = [];
+	let bestScores: { username: string; score: number }[] = [];
 
-	const syncGameMode = (gameMode?: string): void => {
-		if (browser) socket.emit(`gameMode:${roomname}`, gameMode);
-	};
+	let roomList: { name: string; nbPlayer: number }[] = [];
 
-	const joinRoom = (): void => {
-		console.log({ roomname, user: $user, isBot: false });
-		socket.emit('joinRoom', { roomname, user: $user, isBot: false });
-		syncGameMode(undefined);
-	};
+	let roominput: Input;
 
 	onMount(() => {
-		roomname = location.hash.slice(1).toLocaleLowerCase();
-		if (browser) joinRoom();
-		return () => {
-			owner = false;
-		};
+		socket.emit('getRoomList');
+		socket.emit('getScoresList', $user);
+
+		roominput.focus();
+		roominput.setError(history.state.roomnameError);
 	});
 </script>
 
-<Listener
-	handler={(roomnameError) => {
-		goto('/rooms', { state: { roomnameError } });
-	}}
-	on="roomnameError"
-/>
-
-<Listener
-	handler={(usernameError) => {
-		goto('/', { state: { usernameError } });
-	}}
-	on="usernameError"
-/>
-
-<Listener
-	handler={(_users) => {
-		users = _users.players;
-	}}
-	on="join:{roomname}"
-/>
-
-<Listener
-	handler={() => {
-		goto('/{roomname}/{$user}');
-	}}
-	on="start:{roomname}"
-/>
-
-<Listener handler={joinRoom} on="connect" />
-
-<Listener
-	handler={(_gameMode) => {
-		gameMode = _gameMode.gameMode;
-	}}
-	on="gameMode:{roomname}"
-/>
-
-<Listener
-	handler={() => {
-		owner = true;
-	}}
-	on="owner:{roomname}"
-/>
-
-<main>
-	<div class="card">
-		<h1>{roomname}</h1>
-		{#each users as user}
-			<div>- {user}</div>
-		{/each}
-
-		<div class="action {owner ? '' : 'disabled'}">
-			{#each ['slow', 'medium-slow', 'medium-fast', 'fast'] as action}
-				<input
-					type="radio"
-					id={action}
-					value={action}
-					bind:group={gameMode}
-					name="gameMode"
-					on:change={() => syncGameMode(gameMode)}
-				/>
-
-				<label for={action}>
-					<button class="red-button">
-						<img src="/icons/game-mode/{action}.png" alt={action} />
-					</button>
-				</label>
+<main class="main">
+	<div class="hflex">
+		<div class="card scores user-scores">
+			<h2>{$_('rooms.user_scores')}</h2>
+			{#each userScores as score}
+				<div class="score">
+					<span>{score.username}</span>
+					<span>{score.score}</span>
+				</div>
 			{/each}
-		</div>
 
-		<div class="action">
-			<button
-				class="red-button"
-				on:click={() => {
-					socket.emit('leaveRoom');
-					goto('/rooms');
-				}}
-			>
-				{$_('rooms.leave')}
-			</button>
-
-			{#if owner}
-				<button class="red-button" on:click={() => socket.emit(`start:${roomname}`)}>
-					{$_('rooms.start')}
-				</button>
+			{#if !userScores.length}
+				<p style="text-align: center">{$_('rooms.no_game_yet')}</p>
 			{/if}
 		</div>
-	</div>
 
-	{#if !owner}
-		<p>{$_('rooms.waiting_to_start')}</p>
-	{/if}
+		<div class="vflex">
+			<form
+				class="card create-room"
+				on:submit={(e) => {
+					e.preventDefault();
+					if (!roominput.ok()) return;
+					goto(`/${roominput.getValue().toLowerCase()}/${$user}`, { replaceState: true });
+				}}
+			>
+				<h2>{$_('rooms.create_or_join_room')}</h2>
+				<Input
+					bind:this={roominput}
+					maxlength={16}
+					placeholder={$_('rooms.roomname_placeholder')}
+					verify={verifyInput}
+				/>
+				<button class="red-button">{$_('rooms.join')}</button>
+			</form>
+
+			<div class="card room-list">
+				<h2>{$_('rooms.room_list')}</h2>
+				{#each roomList as room}
+					<div class="room-card">
+						<p class="room-list-title">{room.name}</p>
+						<p class="room-number">{room.nbPlayer}</p>
+						<button class="red-button room-button" on:click={() => goto(`/${room.name}/${$user}`)}>
+							{$_('rooms.join')}
+						</button>
+					</div>
+				{/each}
+
+				{#if !roomList.length}
+					<p>{$_('rooms.no_room_available')}</p>
+				{/if}
+			</div>
+		</div>
+
+		<div class="card scores best-scores">
+			<h2>{$_('rooms.best_scores')}</h2>
+			{#if !bestScores.length}
+				<p style="text-align: center">{$_('rooms.no_game_yet')}</p>
+			{/if}
+			{#each bestScores as score}
+				<div class="score">
+					<span>{score.username}</span>
+					<span>{score.score}</span>
+				</div>
+			{/each}
+		</div>
+	</div>
 </main>
 
 <style>
-	input[type='radio'] {
-		display: none;
+	.room-list-title {
+		font-size: 1.5rem;
+		flex: 1;
+	}
+	.room-card {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+	.room-button {
+		font-size: 1rem;
+		padding: 10px;
+	}
+	.room-number {
+		font-size: 1.3rem;
+	}
+	.score {
+		display: flex;
+		justify-content: space-between;
 	}
 
-	.red-button img {
-		width: 100%;
+	.vflex,
+	.hflex {
+		display: flex;
+		gap: 40px;
+	}
+	.vflex {
+		flex-direction: column;
+	}
+	.scores {
+		max-width: 350px;
 	}
 
-	.disabled label {
-		transform: none !important;
-		box-shadow: 8px 8px var(--shadow) !important;
-		cursor: not-allowed;
+	.user-scores:hover {
+		border-color: var(--theme-flamingo);
+	}
+	.create-room:hover {
+		border-color: var(--theme-peach);
+	}
+	.create-room > .red-button:hover {
+		border-color: var(--theme-peach);
+	}
+	.best-scores:hover {
+		border-color: var(--theme-yellow);
+	}
+	.room-list:hover {
+		border-color: var(--theme-red);
 	}
 </style>

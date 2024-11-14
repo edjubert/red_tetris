@@ -10,11 +10,18 @@
     "home": "home"
   },
   "room": {
+    "waiting_to_start": "Waiting for the owner to start the game",
+    "leave": "Leave",
     "start": "start"
   },
   "rooms": {
-    "waiting_to_start": "Waiting for the owner to start the game",
-    "leave": "Leave",
-    "start": "Start"
+    "user_scores": "User scores",
+    "no_game_yet": "No game yet",
+    "create_or_join_room": "Create or join room",
+    "roomname_placeholder": "Roomname",
+    "room_list":"Room list",
+    "no_room_available": "Currently no room available",
+    "best_scores": "Best scores",
+    "join": "join"
   }
 }
