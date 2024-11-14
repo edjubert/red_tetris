@@ -53,14 +53,4 @@
 </div>
 
 <style lang="css">
-	.input {
-		border: none;
-		background-color: var(--theme-overlay2);
-		color: var(--theme-base);
-		margin: 5px;
-		padding: 10px;
-		width: 200px;
-		text-align: center;
-		border-radius: 3px;
-	}
 </style>

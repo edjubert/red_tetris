@@ -63,5 +63,7 @@
 	}
 	.card > .red-button:hover {
 		border-color: var(--theme-teal);
+		background-color: var(--theme-teal);
+		color: var(--theme-mantle);
 	}
 </style>

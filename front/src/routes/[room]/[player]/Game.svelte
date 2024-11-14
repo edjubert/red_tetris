@@ -1,11 +1,14 @@
 <script lang="ts">
-	import { _ } from '../services/i18n';
-	import { muted, user } from '$lib/user';
-	import ButtonLeave from './ButtonLeave.svelte';
-	import ButtonRestart from './ButtonRestart.svelte';
+	import { _ } from '../../../services/i18n';
+	import { muted, socket, user } from '$lib/user';
+	import ButtonLeave from '../../../components/ButtonLeave.svelte';
+	import ButtonRestart from '../../../components/ButtonRestart.svelte';
 	import Listener from '$lib/Listener.svelte';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 
-	let roomname = '';
+	export let roomname: string;
 	let usersBoard = new Map();
 	let gameover = false;
 
@@ -24,9 +27,79 @@
 
 	let endPlayerList: { username: string; score: number }[] = [];
 	let isEndGame = false;
+
+	function initGame() {
+		socket.emit('initgame', roomname);
+	}
+
+	function endGame(playerList: { username: string; score: number }[]) {
+		endPlayerList = playerList;
+		isEndGame = true;
+	}
+
+	onMount(() => {
+		if (!roomname) goto('/rooms');
+		initGame();
+	});
 </script>
 
+<svelte:window on:keydown={(e) => socket.emit(`event:${roomname}`, e.key)} />
+
 <Listener on="owner:{roomname}" handler={() => (owner = true)} />
+
+<Listener
+	on="notauthorized:{roomname}"
+	handler={() => {
+		goto('/rooms');
+	}}
+/>
+
+<Listener on="connect" handler={initGame} />
+<Listener on="endgame:{roomname}" handler={endGame} />/
+<Listener
+	on="restart:{roomname}"
+	handler={() => {
+		goto(`${roomname}/${$user}`);
+	}}
+/>
+<Listener
+	on="gameInfo:{roomname}"
+	handler={(data) => {
+		if (data.clientId === socket.id) {
+			if (data.gameover) gameover = true;
+			else {
+				indestructibleLines = data.indestrutibleLines;
+				board = data.board;
+				score = data.scores.score;
+				lines = data.scores.lines;
+				nextShape = data.nextShape;
+			}
+		} else {
+			if (data.gameover) {
+				usersBoard.set(data.clientId, {
+					...userBoard.get(data.clientId),
+					gameover: true
+				});
+			} else {
+				usersBoard.set(data.clientId, {
+					username: data.username,
+					heights: data.heights,
+					scores: data.scores
+				});
+			}
+			usersBoard = usersBoard;
+		}
+	}}
+/>
+
+<Listener
+	on="sound:{roomname}"
+	handler={(track: string) => {
+		if (browser && !$muted) {
+			new window.Audio(`/sound/${track}.wav`).play();
+		}
+	}}
+/>
 
 <main>
 	<button class="mute-button" on:click={() => muted.set(!$muted)}>
@@ -205,6 +278,10 @@
 			var(--shadow),
 			0 0 6px var(--theme-subtext1);
 	}
+	.score-div {
+		display: flex;
+		justify-content: space-between;
+	}
 	.cell-9 {
 		background: radial-gradient(
 			circle at 5px 4px,
@@ -244,5 +321,104 @@
 	}
 	.cell-0 {
 		--color: var(--theme-overlay0);
+	}
+	@keyframes popin {
+		0% {
+			transform: scale(0);
+		}
+	}
+	.gameover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: grid;
+		place-content: center;
+		gap: 20px;
+		z-index: 999;
+		animation: 0.5s popin forwards;
+	}
+	@keyframes grow {
+		to {
+			height: 2.5em;
+			opacity: 1;
+		}
+	}
+	.gameover-score {
+		overflow: hidden;
+		height: 0;
+		opacity: 0;
+		animation: 0.3s 0.5s grow ease-out forwards;
+	}
+	@keyframes fade {
+		to {
+			opacity: 1;
+		}
+	}
+	aside {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+	}
+
+	.small-board {
+		display: flex;
+		aspect-ratio: 1/2;
+		background: var(--back-1);
+	}
+	.small-board > div {
+		background: var(--grey-back-1);
+		flex: 1;
+	}
+	.small-gameover {
+		filter: brightness(0.3) saturate(0.6);
+	}
+
+	.others {
+		max-width: 15vw;
+		overflow-y: auto;
+		padding-right: 10px;
+	}
+	.others > div {
+		width: 100%;
+	}
+	.self {
+		max-width: 30vw;
+	}
+	.next-piece {
+		width: 4rem;
+	}
+
+	@keyframes endgame-anim {
+		0% {
+			transform: translate(-50%, -50%) scale(0);
+			opacity: 0;
+		}
+		75% {
+			transform: translate(-50%, -50%) scale(1.1);
+		}
+		to {
+			transform: translate(-50%, -50%) scale(1);
+			opacity: 1;
+		}
+	}
+	.mute-button {
+		position: fixed;
+		top: 2%;
+		left: 75%;
+		background: none;
+		border: none;
+		outline: none;
+		cursor: pointer;
+	}
+	.card-endgame {
+		box-shadow: 0 0 50px -15px var(--grey-back-0);
+		position: fixed; /* Stay in place */
+		z-index: 9999; /* Place in front of other elements */
+		overflow: auto; /* Enable scroll */
+		top: 50%;
+		left: 50%;
+		animation: 0.5s endgame-anim cubic-bezier(0.42, 0, 0.21, 1.4) forwards;
 	}
 </style>

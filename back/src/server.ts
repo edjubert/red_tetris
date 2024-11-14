@@ -35,14 +35,11 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 	})
 
 	socket.on(SOCKET_EVENTS.JOIN_ROOM, ({roomname, user, isBot = false}: {roomname: string; user: string; isBot: boolean}) => {
-		logger.info(`some info ${SOCKET_EVENTS.JOIN_ROOM}, ${roomname}, ${user}, ${isBot}`)
-		if (!/^[a-z0-9_-]{1,16}$/i.test(user) || user === undefined)
-		{
+		if (!/^[a-z0-9_-]{1,16}$/i.test(user) || user === undefined) {
 			socket.emit(SOCKET_EVENTS.ERR_USERNAME_ERROR, 'username required');
 			return ;
 		}
-		if (!/^[a-z0-9_-]{1,16}$/i.test(roomname))
-		{
+		if (!/^[a-z0-9_-]{1,16}$/i.test(roomname)) {
 			socket.emit(SOCKET_EVENTS.ERR_ROOMNAME_ERROR, 'invalid roomname');
 			return ;
 		}

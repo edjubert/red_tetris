@@ -23,5 +23,12 @@
     "no_room_available": "Il y a actuellement aucune partie en cours",
     "best_scores": "Meilleurs scores",
     "join": "Rejoindre"
+  },
+  "game": {
+    "high_score": "Meilleurs scores",
+    "score": "Score",
+    "lines": "Lignes",
+    "incoming_lines": "Lignes à venir",
+    "leave": "Partir"
   }
 }

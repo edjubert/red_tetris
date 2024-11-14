@@ -12,7 +12,7 @@
   "room": {
     "waiting_to_start": "Waiting for the owner to start the game",
     "leave": "Leave",
-    "start": "start"
+    "start": "Start"
   },
   "rooms": {
     "user_scores": "User scores",
@@ -22,6 +22,13 @@
     "room_list":"Room list",
     "no_room_available": "Currently no room available",
     "best_scores": "Best scores",
-    "join": "join"
+    "join": "Join"
+  },
+  "game": {
+    "high_score": "High scores",
+    "score": "Score",
+    "lines": "Lines",
+    "incoming_lines": "Incoming lines",
+    "leave": "Leave"
   }
 }

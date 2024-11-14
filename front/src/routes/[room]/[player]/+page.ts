@@ -1,6 +1,4 @@
-import type { PageData } from './$types';
-
-export const load: PageData = ({ params }) => {
+export const load = ({ params }: { params: { room: string; player: string } }) => {
 	return {
 		room: params.room,
 		player: params.player

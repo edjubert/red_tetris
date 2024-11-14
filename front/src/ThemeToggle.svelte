@@ -34,5 +34,7 @@
 	}
 	.red-button:hover {
 		border-color: var(--theme-green);
+		background-color: var(--theme-green);
+		color: var(--theme-mantle);
 	}
 </style>

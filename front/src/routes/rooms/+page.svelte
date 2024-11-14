@@ -131,7 +131,9 @@
 		border-color: var(--theme-peach);
 	}
 	.create-room > .red-button:hover {
+		background-color: var(--theme-peach);
 		border-color: var(--theme-peach);
+		color: var(--theme-mantle);
 	}
 	.best-scores:hover {
 		border-color: var(--theme-yellow);

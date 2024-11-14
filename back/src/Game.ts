@@ -56,6 +56,7 @@ export class Game {
 	}
 
 	setOwner(owner: Player | undefined): void {
+		console.log('OWNER', this.name)
 		this.owner = owner;
 		owner?.client?.emit?.(`${CLIENT_EVENTS.OWNER}:${this.name}`)
 	}
