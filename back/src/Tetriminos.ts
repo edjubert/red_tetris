@@ -4,6 +4,7 @@ export class Tetriminos {
 	private readonly colorid: number;
 	private readonly y: number;
 	private readonly shape: Shape;
+
 	constructor(colorid: number, y: number, shape: Shape) {
 		this.colorid = colorid;
 		this.y = y;

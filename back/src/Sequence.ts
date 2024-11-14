@@ -1,7 +1,7 @@
 import { Tetriminos, TETRIMINOS } from './Tetriminos';
 
 export class Sequence {
-	private sequence: number[];
+	private readonly sequence: number[];
 	constructor(length: number = 32) {
 		this.sequence = [];
 

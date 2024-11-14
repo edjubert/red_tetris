@@ -1,10 +1,9 @@
-import { BroadcastOperator, DefaultEventsMap, Socket } from 'socket.io';
-import { DecorateAcknowledgementsWithMultipleResponses, EventParams } from 'socket.io/dist/typed-events';
+import {   Socket } from 'socket.io';
 
 export class Client {
 	private socket: Socket;
-	private listeners: any[];
-	private rooms: any[];
+	private readonly listeners: any[];
+	private readonly rooms: any[];
 
 	constructor(socket: Socket) {
 		this.socket = socket;
@@ -21,8 +20,8 @@ export class Client {
 		this.rooms.push(roomname)
 	}
 
-	emit(emition: string): void {
-		this.socket.emit(emition);
+	emit(emition: string, ...args: any[]): void {
+		this.socket.emit(emition, ...args);
 	}
 
 	on(event:string, handler: any): void {
@@ -30,7 +29,7 @@ export class Client {
 		this.listeners.push([event, handler]);
 	}
 
-	in(roomname: string): BroadcastOperator<DecorateAcknowledgementsWithMultipleResponses<DefaultEventsMap>, any> {
+	in(roomname: string) {
 		return this.socket.in(roomname);
 	}
 

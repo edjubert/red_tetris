@@ -1,10 +1,11 @@
-import { Board } from './Player';
+import { Board } from '../utils/constants';
 
 export type Shape = number[][];
 export class Piece {
 	y : number;
+	colorid: number;
+
 	private x : number;
-	private colorid: number;
 	private rotation: number;
 	private shape: Shape;
 
@@ -40,11 +41,11 @@ export class Piece {
 		return false;
 	}
 
-	rotateLeft(board:any): void {
-		const oldShape = this.shape.map(row => [...row]);
+	rotateLeft(board: Board): void {
+		const oldShape = this.shape.map(row => [...row])
 		for (const y in this.shape) {
 			for (const x in this.shape[y]) {
-				this.shape[y][x] = oldShape[this.shape.length - 1 - x][y];
+				this.shape[y][x] = oldShape[this.shape.length - 1 - +x][y];
 			}
 		}
 
@@ -96,7 +97,7 @@ export class Piece {
 		return this.move(board, 0, 1);
 	}
 
-	drawOn(board: any): Board {
+	drawOn(board: Board): Board {
 		const copyBoard = board.map(row=>[...row]);
 
 		for (const y in this.shape) {

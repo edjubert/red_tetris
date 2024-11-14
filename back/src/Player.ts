@@ -2,37 +2,60 @@ import { Game } from './Game';
 import { Server } from 'socket.io';
 import { Client } from './Client';
 import { Piece } from './Piece';
+import { Sequence } from './Sequence';
+import { Board, Sound } from '../utils/constants';
 
 function emptyBoard(): number[][] {
 	return new Array(20).fill(new Array(10).fill(0));
 }
 
-export type Board = number[][];
+
+const MOVE_KEYS: {[move:string]: string} = {
+	LEFT: 'ArrowLeft',
+	RIGHT: 'ArrowRight',
+	UP: 'ArrowUp',
+	DOWN: 'ArrowDown',
+	SPACE: ' ',
+}
+
+function makeShadow(currentShape: Piece, layer: Board) {
+	const copy: Piece = currentShape.clone();
+	copy.colorid = 8;
+
+	while (true) {
+		if (!copy.tick(layer)) {
+			return copy
+		}
+	}
+}
 
 export class Player {
 	client: Client;
 	name: string;
+	gameover: boolean;
+	score: number;
 
 	private io: Server;
+	private sequence: Sequence;
 	private room: Game;
 	private currentShape: Piece | undefined
 	private currentShapeIndex: number;
 	private board: Board;
 	private layer: Board;
-	private isBot: boolean = false;
-	private score: number;
 	private lines: number;
-
-	private gameover: boolean;
-
 	private addedLinesNextTurn: number;
-	constructor(io: Server, userName: string, client: Client, room: Game) {
+
+	private readonly isBot: boolean;
+
+	constructor(io: Server, userName: string, isBot: boolean, client: Client, room: Game) {
 		this.io = io;
 		this.name = userName;
 		this.client = client;
 		this.room = room;
 		this.layer = emptyBoard();
 		this.board = emptyBoard();
+		this.isBot = isBot;
+		this.sequence = room.sequence;
 
 		this.currentShapeIndex = 0;
 		this.score = 0;
@@ -67,7 +90,7 @@ export class Player {
 		this.room.makeIndestructibleLines(n - 1, this);
 		this.score += [0, 100, 300, 500, 800][n]
 
-		this.sound(['landing', 'single', 'double', 'triple', 'tetris'][n])
+		this.sound(['landing', 'single', 'double', 'triple', 'tetris'][n] as Sound)
 
 		while (filteredLayer.length !== this.layer.length) {
 			filteredLayer.unshift(new Array(10).fill(0));
@@ -76,6 +99,48 @@ export class Player {
 
 		this.layer = filteredLayer;
 		this.sendLayerData();
+	}
+
+	applyEvent(keys: string[]): void {
+		if (this.currentShape === undefined) return;
+		let newTetriminos = false;
+		const apply = (key: string): void => {
+			switch (key) {
+				case MOVE_KEYS.LEFT:
+					this.currentShape?.move(this.layer, -1, 0);
+					this.sound('move');
+					break;
+				case MOVE_KEYS.RIGHT:
+					this.currentShape?.move(this.layer, 1, 0);
+					this.sound('move')
+					break;
+				case MOVE_KEYS.UP:
+					this.currentShape?.rotateLeft(this.layer);
+					this.sound('rotate')
+					break;
+				case MOVE_KEYS.DOWN:
+					this.currentShape?.move(this.layer, 0, 1);
+					this.score += 1;
+					this.sound('soft-drop');
+					break;
+				case MOVE_KEYS.SPACE:
+					while (this.currentShape?.move(this.layer, 0, 1)) this.score += 2;
+
+					this.newTetriminos();
+					newTetriminos = true;
+					this.sound('hard-drop');
+					break;
+				default:
+					return;
+			}
+
+			for (const key of keys) apply(key)
+			this.draw(!this.isBot || newTetriminos);
+		}
+	}
+
+	sound(track: Sound): void {
+		this.client.emit(`sound:${this.room.name}`, track)
 	}
 
 	sendLayerData(): void {
@@ -98,12 +163,31 @@ export class Player {
 			})
 	}
 
+	sendGameData(): void {
+		const nextShape = this.sequence.get(this.currentShapeIndex);
+
+		this.client.emit(`gameInfo:${this.room.name}`, {
+			clientId: this.client.id,
+			currentShape: this.currentShape,
+			nextShape,
+			board: this.board,
+			...(this.isBot ? {} : {
+				scores: {
+					score: this.score,
+					lines: this.lines
+				},
+				indestructibleLines: this.addedLinesNextTurn
+			})
+		});
+	}
+
 	newTetriminos(): void {
 		if (this.currentShape) this.applyTetriminos();
 
 		this.addLinesToBoard(this.addedLinesNextTurn);
 		this.addedLinesNextTurn = 0;
-		this.currentShape = this.room.sequence.get(this.currentShapeIndex++).constructPiece();
+		this.currentShapeIndex = this.currentShapeIndex + 1
+		this.currentShape = this.room.sequence.get(this.currentShapeIndex).constructPiece();
 
 		if (this.currentShape.intersect(this.layer)) {
 			this.gameover = true;
@@ -127,6 +211,7 @@ export class Player {
 
 		if (send) this.sendGameData();
 	}
+
 
 	tick(): void {
 		if (this.gameover) return;

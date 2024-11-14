@@ -2,19 +2,20 @@ import { Server } from 'socket.io';
 import { Client } from './Client';
 import { Player } from './Player';
 import { Sequence } from './Sequence';
+import { CLIENT_EVENTS, HUMAN_PREFIX } from '../utils/constants';
+import { GameMode } from '../utils/types';
 
-type GameMode = string;
 
 export class Game {
 	started: boolean;
 	players: Map<string, Player>;
+	name: string;
+	sequence = new Sequence();
+	owner: Player | undefined
+  gameOverList: Player[];
+	gameMode: string;
 
-	private io: Server;
-	private name: string;
-	private gameMode: string;
-	private sequence = new Sequence();
-	private owner: Player | undefined
-
+	private readonly io: Server;
 	private tickPerSeconds: number;
 	private timeout: NodeJS.Timeout | undefined;
 	
@@ -27,6 +28,7 @@ export class Game {
 
 		this.players = new Map<string, Player>()
 		this.tickPerSeconds = 0;
+		this.gameOverList = [];
 	}
 
 	makeIndestructibleLines(nbLines: number, senderPlayer: Player): void {
@@ -46,7 +48,7 @@ export class Game {
 				return `${player.name}${isOwner ? ' (owner)' : ''}`
 			})
 
-		this.io.in(this.name).emit(`join:${this.name}`, users);
+		this.io.in(this.name).emit(`${CLIENT_EVENTS.JOIN}:${this.name}`, users);
 	}
 
 	getPlayersList() {
@@ -55,7 +57,7 @@ export class Game {
 
 	setOwner(owner: Player | undefined): void {
 		this.owner = owner;
-		owner?.client?.emit?.(`owner:${this.name}`)
+		owner?.client?.emit?.(`${CLIENT_EVENTS.OWNER}:${this.name}`)
 	}
 
 	removePlayer(client: Client): void {
@@ -85,24 +87,35 @@ export class Game {
 			this.stopInterval()
 
 			for (const [_, player] of this.players) {
-				player.client.removeAllListeners(`event:${this.name}`);
+				player.client.removeAllListeners(`${CLIENT_EVENTS.EVENT}:${this.name}`);
 			}
 
 			const list = [];
-			for (const {username, score} of this.gameOverList) {
-				list.unshift({username, score});
+			for (const {name, score} of this.gameOverList) {
+				list.unshift({name, score});
 			}
 
-			for (const [_, { username, score, gameover}] of this.players) {
+			for (const [_, { name, score, gameover}] of this.players) {
 				 if (!gameover) {
-					 list.unshift({ username, score});
+					 list.unshift({ name, score});
 				 }
 			}
 
 			this.setOwner(this.owner);
 
-			this.io.in(this.name).emit(`endgame:${this.name}`, list);
+			this.io.in(this.name).emit(`${CLIENT_EVENTS.END_GAME}:${this.name}`, list);
 		}
+	}
+
+	addPlayer(username: string, isBot: boolean, client: Client): void {
+		const newPlayer = new Player(this.io, username, isBot, client, this);
+
+		client.join(this.name);
+		if (!isBot) client.join(`${this.name}${HUMAN_PREFIX}`);
+		if (this.players.size === 0 || this.owner?.client?.id === client.id) this.setOwner(newPlayer)
+
+		this.players.get(client.id)?.client?.clearListeners?.();
+		this.players.set(client.id, newPlayer);
 	}
 
 	launch(): void {
@@ -111,13 +124,13 @@ export class Game {
 		const isSolo = this.players.size === 1;
 
 		for (const [i, player] of this.players) {
-			player.client.on(`event:${this.name}`, (key) => {
-				player.applyEvent(key);
+			player.client.on(`${CLIENT_EVENTS.EVENT}:${this.name}`, (key: string) => {
+				player.applyEvent([key]);
 			})
 
-			player.client.on('initgame', () => {
+			player.client.on(CLIENT_EVENTS.INIT_GAME, () => {
 				for (const [j, other] of this.players) {
-					if (i !== j) other.sendLayerData(player.client);
+					if (i !== j) other.sendLayerData();
 				}
 			});
 
