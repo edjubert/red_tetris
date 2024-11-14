@@ -135,10 +135,10 @@ export class Game {
 			});
 
 			const ticks: {[key: GameMode]: number} = {
-				blackhole: 13,
-				sun: 6,
-				earth: 2.5,
-				moon: 1.25
+				"fast": 13,
+				"medium-fast": 6,
+				"medium-slow": 2.5,
+				"slow": 1.25
 			}
 
 			this.tickPerSeconds = ticks[this.gameMode];

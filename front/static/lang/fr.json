@@ -11,5 +11,10 @@
   },
   "room": {
     "start": "Commencer"
+  },
+  "rooms": {
+    "waiting_to_start": "En attente que le maitre du jeu commence",
+    "leave": "Partir",
+    "start": "Commencer"
   }
 }

@@ -7,6 +7,7 @@
 	import ThemeToggle from '../ThemeToggle.svelte';
 	import ThemeContext from '../ThemeContext.svelte';
 	import { setupI18n, isLocaleLoaded, _ } from '../services/i18n';
+	import '$lib/style.css';
 
 	onMount(() => {
 		if (!$isLocaleLoaded) {
@@ -31,12 +32,12 @@
 </script>
 
 <ThemeContext>
-	<main>
+	<div class="top-navigation">
 		<a href="/" id="logo">
-			<img alt="logo" src="/red-tetris.png" />
+			<img alt="logo" src="/icons/tetris.png" />
 		</a>
 		<ThemeToggle />
-	</main>
+	</div>
 </ThemeContext>
 
 <slot />
@@ -45,8 +46,11 @@
 {/if}
 
 <style lang="css">
-	main {
+	.top-navigation {
 		display: flex;
+		position: absolute;
+		top: 0;
+		padding: 10px;
 		width: 100%;
 		justify-content: space-between;
 	}

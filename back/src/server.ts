@@ -27,25 +27,30 @@ let rooms = new Map<string, Game>();
 io.on(IO_EVENTS.CONNECTION, (socket) => {
 	logger.info('User connected')
 
-	socket.on(SOCKET_EVENTS.GET_ROOM_DATA, (roomName: string, userName:string, isBot: boolean = false) => {
-		if (!/^[a-z0-9_-]{1,16}$/i.test(userName) || userName === undefined)
+	socket.on(SOCKET_EVENTS.INIT_GAME, (roomname: string): void => {
+		const currentRoom = rooms.get(roomname);
+		if (currentRoom === undefined || !currentRoom?.players.has(socket.id)) socket.emit(`${SOCKET_EVENTS.ERR_NOT_AUTHORIZED}:${roomname}`)
+	})
+
+	socket.on(SOCKET_EVENTS.GET_ROOM_DATA, (roomname: string, username:string, isBot: boolean = false) => {
+		if (!/^[a-z0-9_-]{1,16}$/i.test(username) || username === undefined)
 		{
 			socket.emit(SOCKET_EVENTS.ERR_USERNAME_ERROR, 'username required');
 			return ;
 		}
-		if (!/^[a-z0-9_-]{1,16}$/i.test(roomName))
+		if (!/^[a-z0-9_-]{1,16}$/i.test(roomname))
 		{
 			socket.emit(SOCKET_EVENTS.ERR_ROOMNAME_ERROR, 'invalid roomname');
 			return ;
 		}
 
-		if (!rooms.has(roomName)) {
-			rooms.set(roomName, new Game(io, roomName))
+		if (!rooms.has(roomname)) {
+			rooms.set(roomname, new Game(io, roomname))
 		}
 
-		let room = rooms.get(roomName);
+		let room = rooms.get(roomname);
 		if (room?.started === true) {
-			socket.emit(SOCKET_EVENTS.ERR_ROOMNAME_ERROR, `room '${roomName}' is already started`);
+			socket.emit(SOCKET_EVENTS.ERR_ROOMNAME_ERROR, `room '${roomname}' is already started`);
 			return;
 		}
 
@@ -55,42 +60,42 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 
 			if (room?.players.size === 0) {
 				room.stopInterval();
-				rooms.delete(roomName);
+				rooms.delete(roomname);
 			}
 			sendRoomList(io);
 		}
 
-		room?.addPlayer(userName, isBot, client);
+		room?.addPlayer(username, isBot, client);
 		sendRoomList(io);
 		room?.sendUsersList();
 
-		client.on(`${CLIENT_EVENTS.START}:${roomName}`, () => {
+		client.on(`${CLIENT_EVENTS.START}:${roomname}`, () => {
 			if (room?.owner?.client?.id !== client.id) return;
 
-			io.in(roomName).emit(`${CLIENT_EVENTS.START}:${roomName}`);
+			io.in(roomname).emit(`${CLIENT_EVENTS.START}:${roomname}`);
 
 			room.launch();
 			sendRoomList(io);
 		});
 
-		client.on(`${CLIENT_EVENTS.RESTART}:${roomName}`, () => {
+		client.on(`${CLIENT_EVENTS.RESTART}:${roomname}`, () => {
 			if (room?.owner?.client?.id !== client.id) return;
-			io.in(roomName).emit(`${CLIENT_EVENTS.RESTART}:${roomName}`);
+			io.in(roomname).emit(`${CLIENT_EVENTS.RESTART}:${roomname}`);
 
 			for (const [_, player] of room.players) player.client.clearListeners();
 
 			room.players = new Map<string, Player>();
 			room.stopInterval()
 
-			rooms.set(roomName, new Game(io, roomName, room.gameMode))
-			room = rooms.get(roomName);
-			room?.addPlayer(userName, isBot, client);
+			rooms.set(roomname, new Game(io, roomname, room.gameMode))
+			room = rooms.get(roomname);
+			room?.addPlayer(username, isBot, client);
 		});
 
-		client.on(`${CLIENT_EVENTS.GAME_MODE}:${roomName}`, (gameMode: string) => {
+		client.on(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, (gameMode: string) => {
 			const newGameMode = gameMode ?? room?.gameMode;
 			if (room?.owner?.client?.id === client.id) room.gameMode = newGameMode;
-			io.in(roomName).emit(`${CLIENT_EVENTS.GAME_MODE}:${roomName}`, room?.gameMode);
+			io.in(roomname).emit(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, room?.gameMode);
 		});
 
 		client.on(CLIENT_EVENTS.LEAVE, removePlayer)

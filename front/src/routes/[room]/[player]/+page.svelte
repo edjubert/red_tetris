@@ -6,17 +6,31 @@
 	import type { Room } from '$lib/types';
 	import { _ } from '../../../services/i18n';
 	import { goto } from '$app/navigation';
-	import Game from "../../../components/Game.svelte";
+	import Game from '../../../components/Game.svelte';
+	import { browser } from '$app/environment';
 
 	let roomData = $state<Room>();
+	let owner = false;
 	let { data }: { data: PageData } = $props();
 
 	const initGame = (): void => {
-		socket.emit('initGame', data.room, data.player);
+		socket.emit('initGame', data.room);
 	};
 
+	const syncGameMode = (gameMode?: string): void => {
+		if (browser) socket.emit(`gameMode:${data.room}`, gameMode);
+	};
+
+	const joinRoom = (): void => {
+		socket.emit('joinRoom', { roomname: data.room, user: data.player });
+		syncGameMode(undefined);
+	};
 	onMount(() => {
-		socket.emit('getRoomData', data.room, data.player);
+		// socket.emit('getRoomData', data.room, data.player);
+		if (browser) joinRoom();
+		return () => {
+			owner = false;
+		};
 	});
 </script>
 

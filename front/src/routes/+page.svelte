@@ -2,12 +2,11 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	import { user, room } from '$lib/user';
+	import { user } from '$lib/user';
 	import Input from '$lib/Input.svelte';
 	import { setupI18n, _, isLocaleLoaded } from '../services/i18n';
 
-	let userinput: any;
-	let roomname: any;
+	let userinput: Input;
 
 	onMount(() => {
 		if (!$isLocaleLoaded) {
@@ -17,10 +16,6 @@
 		userinput?.focus?.();
 		userinput?.setValue?.($user);
 		userinput?.setError?.(history.state.userNameError);
-
-		roomname?.focus?.();
-		roomname?.setValue?.($room);
-		roomname?.setError?.(history.state.roomNameError);
 	});
 
 	const verifyInput = (value: string) => {
@@ -41,13 +36,12 @@
 			on:submit={(e) => {
 				e.preventDefault();
 
-				if (!userinput.ok?.() || !roomname.ok?.()) {
+				if (!userinput.ok?.()) {
 					return;
 				}
 
 				user.set(userinput.getValue());
-				room.set(roomname.getValue());
-				goto(`/${roomname.getValue()}/${userinput.getValue()}`, { replaceState: true });
+				goto(`/rooms`, { replaceState: true });
 			}}
 		>
 			<Input
@@ -57,14 +51,7 @@
 				verify={verifyInput}
 			/>
 
-			<Input
-				bind:this={roomname}
-				maxlength="16"
-				placeholder={$_('home.roomname')}
-				verify={verifyInput}
-			/>
-
-			<button class="button">{$_('home.play')}</button>
+			<button class="red-button">{$_('home.play')}</button>
 		</form>
 	{/if}
 </main>
@@ -78,13 +65,5 @@
 	main {
 		font-family: sans-serif;
 		text-align: center;
-	}
-
-	.button {
-		padding: 10px;
-		width: 200px;
-		border: none;
-		background-color: var(--theme-teal);
-		border-radius: 5px;
 	}
 </style>

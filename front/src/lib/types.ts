@@ -3,4 +3,5 @@ export type Room = {
 	owner: string;
 	players: string[];
 	started: boolean;
+	gameMode: string;
 };

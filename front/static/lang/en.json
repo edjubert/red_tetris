@@ -11,5 +11,10 @@
   },
   "room": {
     "start": "start"
+  },
+  "rooms": {
+    "waiting_to_start": "Waiting for the owner to start the game",
+    "leave": "Leave",
+    "start": "Start"
   }
 }

@@ -17,7 +17,7 @@
 	};
 </script>
 
-<select bind:value={selected} onchange={handleSubmit}>
+<select bind:value={selected} class="red-button" onchange={handleSubmit}>
 	{#each themeSelector as t}
 		<option value={t.name}>{t.name}</option>
 	{/each}
@@ -31,8 +31,7 @@
 		text-align: center;
 		border-radius: 5px;
 		height: 50%;
-		-webkit-appearance: none;
-		-moz-appearance: none;
+		appearance: none;
 		text-indent: 1px;
 		text-overflow: '';
 	}

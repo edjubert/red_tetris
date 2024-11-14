@@ -30,7 +30,7 @@
 
 <main>
 	<button class="mute-button" on:click={() => muted.set(!$muted)}>
-		<img src={`${$muted ? '/sound-down.svg' : '/sound-up.svg'}`} alt="sound" />
+		<img src={`/icons/${$muted ? 'no-sound.png' : 'sound.png'}`} alt="sound" />
 	</button>
 	<aside class="others">
 		{#each [...usersBoard.entries()] as [_, { username, heights, scores, gameover }]}
