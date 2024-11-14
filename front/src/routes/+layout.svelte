@@ -9,11 +9,16 @@
 	import { setupI18n, isLocaleLoaded, _ } from '../services/i18n';
 	import '$lib/style.css';
 
-	onMount(() => {
-		if (!$isLocaleLoaded) {
-			setupI18n();
-		}
-	});
+	// onMount(() => {
+	// 	if (!$isLocaleLoaded) {
+	// 		setupI18n();
+	// 	}
+	// });
+	async function setup() {
+		console.log('setup');
+		return await Promise.allSettled([setupI18n()]);
+	}
+	const setupResult = setup();
 
 	if (browser) {
 		const checkPage = () => {
@@ -40,12 +45,21 @@
 	</div>
 </ThemeContext>
 
-<slot />
-{#if !$connected}
-	<div class="disconnected">{$_('layout.disconnected')}</div>
-{/if}
+{#await setupResult}
+	<img src="/icons/wait.png" alt="wait" class="wait" />
+{:then}
+	<slot />
+	{#if !$connected}
+		<div class="disconnected">{$_('layout.disconnected')}</div>
+	{/if}
+{:catch error}
+	<p>{error}</p>
+{/await}
 
 <style lang="css">
+	.wait {
+		width: 10%;
+	}
 	.top-navigation {
 		display: flex;
 		position: absolute;

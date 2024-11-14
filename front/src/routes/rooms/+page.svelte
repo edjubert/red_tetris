@@ -16,9 +16,11 @@
 	};
 
 	const joinRoom = (): void => {
-		socket.emit('joinRoom', { roomname, user: $user });
+		console.log({ roomname, user: $user, isBot: false });
+		socket.emit('joinRoom', { roomname, user: $user, isBot: false });
 		syncGameMode(undefined);
 	};
+
 	onMount(() => {
 		roomname = location.hash.slice(1).toLocaleLowerCase();
 		if (browser) joinRoom();
@@ -97,6 +99,7 @@
 				</label>
 			{/each}
 		</div>
+
 		<div class="action">
 			<button
 				class="red-button"

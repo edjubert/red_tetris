@@ -32,8 +32,9 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 		if (currentRoom === undefined || !currentRoom?.players.has(socket.id)) socket.emit(`${SOCKET_EVENTS.ERR_NOT_AUTHORIZED}:${roomname}`)
 	})
 
-	socket.on(SOCKET_EVENTS.GET_ROOM_DATA, (roomname: string, username:string, isBot: boolean = false) => {
-		if (!/^[a-z0-9_-]{1,16}$/i.test(username) || username === undefined)
+	socket.on(SOCKET_EVENTS.JOIN_ROOM, (roomname: string, user:string, isBot: boolean = false) => {
+		logger.info(`some info ${SOCKET_EVENTS.JOIN_ROOM}, ${roomname}, ${user}, ${isBot}`)
+		if (!/^[a-z0-9_-]{1,16}$/i.test(user) || user === undefined)
 		{
 			socket.emit(SOCKET_EVENTS.ERR_USERNAME_ERROR, 'username required');
 			return ;
@@ -65,7 +66,7 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 			sendRoomList(io);
 		}
 
-		room?.addPlayer(username, isBot, client);
+		room?.addPlayer(user, isBot, client);
 		sendRoomList(io);
 		room?.sendUsersList();
 
@@ -89,7 +90,7 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 
 			rooms.set(roomname, new Game(io, roomname, room.gameMode))
 			room = rooms.get(roomname);
-			room?.addPlayer(username, isBot, client);
+			room?.addPlayer(user, isBot, client);
 		});
 
 		client.on(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, (gameMode: string) => {
