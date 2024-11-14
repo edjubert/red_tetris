@@ -28,6 +28,8 @@ let rooms = new Map<string, Game>();
 io.on(IO_EVENTS.CONNECTION, (socket) => {
 	logger.info('User connected')
 
+	socket.on(SOCKET_EVENTS.GET_ROOM_LIST, () => sendRoomList(socket));
+
 	socket.on(SOCKET_EVENTS.INIT_GAME, ({roomname}:{roomname: string}): void => {
 		logger.info(`init game ${roomname}`)
 		const currentRoom = rooms.get(roomname);

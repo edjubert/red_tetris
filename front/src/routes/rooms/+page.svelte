@@ -5,11 +5,13 @@
 	import Input from '$lib/Input.svelte';
 	import { verifyInput } from '$lib/verifyInput';
 	import { onMount } from 'svelte';
+	import Listener from '$lib/Listener.svelte';
 
-	let userScores: { username: string; score: number }[] = [];
-	let bestScores: { username: string; score: number }[] = [];
+	type Score = { username: string; score: number };
+	let userScores = $state<Score[]>([]);
+	let bestScores = $state<Score[]>([]);
 
-	let roomList: { name: string; nbPlayer: number }[] = [];
+	let roomList = $state<{ name: string; nbOfPlayers: number }[]>([]);
 
 	let roominput: Input;
 
@@ -21,6 +23,21 @@
 		roominput.setError(history.state.roomnameError);
 	});
 </script>
+
+<Listener
+	handler={(scores: { userScores: Score[]; bestScores: Score[] }) => {
+		userScores = scores.userScores;
+		bestScores = scores.bestScores;
+	}}
+	on="scoresList"
+/>
+
+<Listener
+	handler={(_roomList: { name: string; nbOfPlayers: number }[]) => {
+		roomList = _roomList;
+	}}
+	on="roomList"
+/>
 
 <main class="main">
 	<div class="hflex">
