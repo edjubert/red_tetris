@@ -6,7 +6,10 @@
 	let value = '';
 
 	export const ok = (): boolean => {
-		error = verify(getValue());
+		const { valid, err } = verify(getValue());
+		if (!valid) {
+			error = err;
+		}
 		if (!error) {
 			return true;
 		}
@@ -46,7 +49,10 @@
 				error = new Error('no target');
 			}
 			const { value } = e.target as HTMLInputElement;
-			error = verify(value);
+			const { valid, err } = verify(value);
+			if (!valid) {
+				error = err;
+			}
 		}}
 		{placeholder}
 	/>

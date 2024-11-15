@@ -20,6 +20,9 @@
 	"rooms": {
 		"user_scores": "Scores de l'utilisateur",
 		"no_game_yet": "Pas de partie",
+		"no_best_score": "Pas de score",
+		"no_user_score": "Pas de score",
+		"hello": "Bonjour",
 		"create_or_join_room": "Crées ou rejoins une partie",
 		"create_or_join_button": "Créer / Rejoindre",
 		"roomname_placeholder": "Nom de partie",

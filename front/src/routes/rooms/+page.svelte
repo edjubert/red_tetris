@@ -25,6 +25,9 @@
 	};
 
 	onMount(() => {
+		if (!verifyInput($user).valid) {
+			goto('/');
+		}
 		socket.emit('getRoomList');
 		socket.emit('getScoresList', $user);
 
@@ -37,6 +40,9 @@
 <Listener handler={handleRoomList} on="roomList" />
 
 <main>
+	<div class="greetings">
+		<h1>{$_('rooms.hello') + ' ' + $user}</h1>
+	</div>
 	<div class="hflex">
 		<div class="card scores user-scores">
 			<h2>{$_('rooms.user_scores')}</h2>
@@ -48,7 +54,7 @@
 			{/each}
 
 			{#if !userScores.length}
-				<p style="text-align: center">{$_('rooms.no_game_yet')}</p>
+				<p style="text-align: center">{$_('rooms.no_user_score')}</p>
 			{/if}
 		</div>
 
@@ -92,7 +98,7 @@
 		<div class="card scores best-scores">
 			<h2>{$_('rooms.best_scores')}</h2>
 			{#if !bestScores.length}
-				<p style="text-align: center">{$_('rooms.no_game_yet')}</p>
+				<p style="text-align: center">{$_('rooms.no_best_score')}</p>
 			{/if}
 			{#each bestScores as score}
 				<div class="score">
@@ -105,6 +111,10 @@
 </main>
 
 <style>
+	.greetings {
+		width: 100%;
+		text-align: center;
+	}
 	.room-list-title {
 		font-size: 1.5rem;
 		flex: 1;

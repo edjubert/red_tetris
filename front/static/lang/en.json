@@ -20,6 +20,9 @@
 	"rooms": {
 		"user_scores": "User scores",
 		"no_game_yet": "No game yet",
+		"no_best_score": "No score",
+		"no_user_score": "No score",
+		"hello": "hello",
 		"create_or_join_room": "Create or join room",
 		"create_or_join_button": "Create / Join",
 		"roomname_placeholder": "Roomname",

@@ -4,6 +4,8 @@ import { Player } from './Player';
 import { Sequence } from './Sequence';
 import { CLIENT_EVENTS, HUMAN_PREFIX } from '../../utils/constants';
 import { GameMode } from '../../utils/types';
+import { PoolConnection } from 'mariadb';
+import { logger } from '../../utils/logger';
 
 export class Game {
 	started: boolean;
@@ -17,8 +19,9 @@ export class Game {
 	private readonly io: Server;
 	private tickPerSeconds: number;
 	private timeout: NodeJS.Timeout | undefined;
+	private conn: PoolConnection;
 
-	constructor(io: Server, name: string, gameMode: GameMode = 'slow') {
+	constructor(io: Server, conn: PoolConnection, name: string, gameMode: GameMode = 'slow') {
 		this.io = io;
 		this.name = name;
 		this.owner = undefined;
@@ -28,6 +31,7 @@ export class Game {
 		this.players = new Map<string, Player>();
 		this.tickPerSeconds = 0;
 		this.gameOverList = [];
+		this.conn = conn;
 	}
 
 	makeIndestructibleLines(nbLines: number, senderPlayer: Player): void {
@@ -58,7 +62,19 @@ export class Game {
 		owner?.client?.emit?.(`${CLIENT_EVENTS.OWNER}:${this.name}`);
 	}
 
-	removePlayer(client: Client): void {
+	async removePlayer(conn: PoolConnection, client: Client): Promise<void> {
+		const currentPlayer = this.players.get(client.id);
+		if (this.started && (currentPlayer?.score ?? 0) > 0 && !currentPlayer?.isBot) {
+			try {
+				await conn.query(
+					'INSERT INTO red_tetris.scores (username, roomname, score, created) VALUES (?, ?, ?, now())',
+					[currentPlayer?.name, this.name, currentPlayer?.score]
+				);
+			} catch (e) {
+				logger.error(e)
+			}
+		}
+
 		client.clearListeners();
 		this.players.delete(client.id);
 

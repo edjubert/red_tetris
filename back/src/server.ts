@@ -6,6 +6,10 @@ import { handleInitGame } from './handlers/handleInitGame';
 import { handleGetScoresList } from './handlers/handleGetScoresList';
 import { handleGetRoomList } from './handlers/handleGetRoomList';
 import { logger } from '../utils/logger';
+import mariadb from 'mariadb';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const io = new Server({
 	cors: {
@@ -13,17 +17,31 @@ const io = new Server({
 	}
 });
 
+const pool = mariadb.createPool({
+	host: process.env.DB_HOST || 'localhost',
+	port: +(process.env.DB_PORT || 3306),
+	user: process.env.MARIADB_USER,
+	password: process.env.MARIADB_PASSWORD
+})
+
 const PORT = 4000;
 
 let rooms = new Map<string, Game>();
 
-io.on(IO_EVENTS.CONNECTION, (socket) => {
+io.on(IO_EVENTS.CONNECTION, async (socket) => {
 	logger.info('User connected');
 
-	socket.on(SOCKET_EVENTS.GET_ROOM_LIST, handleGetRoomList(io, rooms));
-	socket.on(SOCKET_EVENTS.GET_SCORES_LIST, handleGetScoresList(socket));
-	socket.on(SOCKET_EVENTS.INIT_GAME, handleInitGame(socket, rooms));
-	socket.on(SOCKET_EVENTS.JOIN_ROOM, handleJoinRoom(io, socket, rooms));
+	try {
+		const conn = await pool.getConnection()
+
+		socket.on(SOCKET_EVENTS.GET_ROOM_LIST, handleGetRoomList(io, rooms));
+		socket.on(SOCKET_EVENTS.GET_SCORES_LIST, handleGetScoresList(socket, conn));
+		socket.on(SOCKET_EVENTS.INIT_GAME, handleInitGame(socket, rooms));
+		socket.on(SOCKET_EVENTS.JOIN_ROOM, handleJoinRoom(io, socket, conn, rooms));
+	} catch (e) {
+		logger.error(e)
+	}
+
 });
 
 io.listen(PORT);

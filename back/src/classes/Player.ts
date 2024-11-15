@@ -33,6 +33,7 @@ export class Player {
 	name: string;
 	gameover: boolean;
 	score: number;
+	isBot: boolean;
 
 	private io: Server;
 	private sequence: Sequence;
@@ -44,7 +45,6 @@ export class Player {
 	private lines: number;
 	private addedLinesNextTurn: number;
 
-	private readonly isBot: boolean;
 
 	constructor(io: Server, userName: string, isBot: boolean, client: Client, room: Game) {
 		this.io = io;
