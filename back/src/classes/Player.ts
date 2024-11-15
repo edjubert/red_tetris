@@ -3,20 +3,19 @@ import { Server } from 'socket.io';
 import { Client } from './Client';
 import { Piece } from './Piece';
 import { Sequence } from './Sequence';
-import { Board, CLIENT_EVENTS, Sound } from '../utils/constants';
+import { Board, CLIENT_EVENTS, Sound } from '../../utils/constants';
 
 function emptyBoard(): number[][] {
 	return new Array(20).fill(new Array(10).fill(0));
 }
 
-
-const MOVE_KEYS: {[move:string]: string} = {
+const MOVE_KEYS: { [move: string]: string } = {
 	LEFT: 'ArrowLeft',
 	RIGHT: 'ArrowRight',
 	UP: 'ArrowUp',
 	DOWN: 'ArrowDown',
-	SPACE: ' ',
-}
+	SPACE: ' '
+};
 
 function makeShadow(currentShape: Piece, layer: Board) {
 	const copy: Piece = currentShape.clone();
@@ -24,7 +23,7 @@ function makeShadow(currentShape: Piece, layer: Board) {
 
 	while (true) {
 		if (!copy.tick(layer)) {
-			return copy
+			return copy;
 		}
 	}
 }
@@ -38,7 +37,7 @@ export class Player {
 	private io: Server;
 	private sequence: Sequence;
 	private room: Game;
-	private currentShape: Piece | undefined
+	private currentShape: Piece | undefined;
 	private currentShapeIndex: number;
 	private board: Board;
 	private layer: Board;
@@ -72,7 +71,7 @@ export class Player {
 			copyBoard.push(new Array(10).fill(9));
 		}
 
-		this.layer = copyBoard
+		this.layer = copyBoard;
 	}
 
 	addIndestructibleLine(nbLines: number): void {
@@ -83,15 +82,16 @@ export class Player {
 		this.layer = this.currentShape?.drawOn(this.layer) || [];
 		this.currentShape = undefined;
 
-		const filteredLayer = this.layer
-			.filter((row: number[]) => row.some((cell: number) => cell == 0 || cell == 8 || cell == 9));
+		const filteredLayer = this.layer.filter((row: number[]) =>
+			row.some((cell: number) => cell == 0 || cell == 8 || cell == 9)
+		);
 		const n = this.layer.length - filteredLayer.length;
 
-		console.log({n})
+		console.log({ n });
 		this.room.makeIndestructibleLines(n - 1, this);
-		this.score += [0, 100, 300, 500, 800][n]
+		this.score += [0, 100, 300, 500, 800][n];
 
-		this.sound(['landing', 'single', 'double', 'triple', 'tetris'][n] as Sound)
+		this.sound(['landing', 'single', 'double', 'triple', 'tetris'][n] as Sound);
 
 		while (filteredLayer.length !== this.layer.length) {
 			filteredLayer.unshift(new Array(10).fill(0));
@@ -114,11 +114,11 @@ export class Player {
 					break;
 				case MOVE_KEYS.RIGHT:
 					this.currentShape?.move(this.layer, 1, 0);
-					this.sound('move')
+					this.sound('move');
 					break;
 				case MOVE_KEYS.UP:
 					this.currentShape?.rotateLeft(this.layer);
-					this.sound('rotate')
+					this.sound('rotate');
 					break;
 				case MOVE_KEYS.DOWN:
 					this.currentShape?.move(this.layer, 0, 1);
@@ -135,14 +135,14 @@ export class Player {
 				default:
 					return;
 			}
-		}
+		};
 
-		for (const key of keys) apply(key)
+		for (const key of keys) apply(key);
 		this.draw(!this.isBot || newTetriminos);
 	}
 
 	sound(track: Sound): void {
-		this.client.emit(`sound:${this.room.name}`, track)
+		this.client.emit(`sound:${this.room.name}`, track);
 	}
 
 	sendLayerData(): void {
@@ -152,8 +152,7 @@ export class Player {
 			}
 
 			return 20;
-		})
-
+		});
 
 		this.client.in(`${this.room.name}+human`).emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 			clientId: this.client.id,
@@ -161,9 +160,9 @@ export class Player {
 			username: this.name,
 			scores: {
 				score: this.score,
-				lines: this.lines,
+				lines: this.lines
 			}
-		})
+		});
 	}
 
 	sendGameData(): void {
@@ -174,12 +173,14 @@ export class Player {
 			currentShape: this.currentShape,
 			nextShape,
 			board: this.board,
-			...(this.isBot ? {} : {
-				scores: {
-					score: this.score,
-					lines: this.lines
-				},
-			}),
+			...(this.isBot
+				? {}
+				: {
+						scores: {
+							score: this.score,
+							lines: this.lines
+						}
+					}),
 			indestructibleLines: this.addedLinesNextTurn
 		});
 	}
@@ -189,7 +190,7 @@ export class Player {
 
 		this.addLinesToBoard(this.addedLinesNextTurn);
 		this.addedLinesNextTurn = 0;
-		this.currentShapeIndex = this.currentShapeIndex + 1
+		this.currentShapeIndex = this.currentShapeIndex + 1;
 		this.currentShape = this.room.sequence.get(this.currentShapeIndex).constructPiece();
 
 		if (this.currentShape.intersect(this.layer)) {
@@ -197,15 +198,14 @@ export class Player {
 			this.currentShape = undefined;
 			this.io.in(this.room.name).emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 				clientId: this.client.id,
-				gameover: true,
+				gameover: true
 			});
 			this.room.gameOverList.push(this);
 		}
-
 	}
 
 	draw(send: boolean = true): void {
-		this.board = this.layer.map(row => [...row]);
+		this.board = this.layer.map((row) => [...row]);
 
 		if (this.currentShape) {
 			this.board = makeShadow(this.currentShape, this.layer).drawOn(this.board);
@@ -214,7 +214,6 @@ export class Player {
 
 		if (send) this.sendGameData();
 	}
-
 
 	tick(): void {
 		if (this.gameover) return;

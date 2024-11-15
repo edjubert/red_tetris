@@ -1,4 +1,4 @@
-import {   Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 
 export class Client {
 	private socket: Socket;
@@ -17,14 +17,14 @@ export class Client {
 
 	join(roomname: string): void {
 		this.socket.join(roomname);
-		this.rooms.push(roomname)
+		this.rooms.push(roomname);
 	}
 
 	emit(emition: string, ...args: any[]): void {
 		this.socket.emit(emition, ...args);
 	}
 
-	on(event:string, handler: any): void {
+	on(event: string, handler: any): void {
 		this.socket.on(event, handler);
 		this.listeners.push([event, handler]);
 	}

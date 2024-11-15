@@ -7,16 +7,20 @@ export class Sequence {
 
 		for (let i = 0; i < length; i++) {
 			const tetriminos = [0, 1, 2, 3, 4, 5, 6];
-			let currentIndex = tetriminos.length, randomIndex;
+			let currentIndex = tetriminos.length,
+				randomIndex;
 
 			while (currentIndex !== 0) {
 				randomIndex = Math.floor(Math.random() * currentIndex);
 				currentIndex--;
 
-				[tetriminos[currentIndex], tetriminos[randomIndex]] = [tetriminos[randomIndex], tetriminos[currentIndex]];
+				[tetriminos[currentIndex], tetriminos[randomIndex]] = [
+					tetriminos[randomIndex],
+					tetriminos[currentIndex]
+				];
 			}
 
-			this.sequence.push(...tetriminos)
+			this.sequence.push(...tetriminos);
 		}
 	}
 

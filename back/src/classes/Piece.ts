@@ -1,11 +1,11 @@
-import { Board } from '../utils/constants';
+import { Board } from '../../utils/constants';
 
 export type Shape = number[][];
 export class Piece {
-	y : number;
+	y: number;
 	colorid: number;
 
-	private x : number;
+	private x: number;
 	private rotation: number;
 	private shape: Shape;
 
@@ -13,7 +13,7 @@ export class Piece {
 		this.x = 5 - Math.ceil(shape.length / 2);
 		this.y = 0;
 		this.colorid = colorid;
-		this.shape = shape.map(row => [...row]);
+		this.shape = shape.map((row) => [...row]);
 		this.rotation = 0;
 	}
 
@@ -42,7 +42,7 @@ export class Piece {
 	}
 
 	rotateLeft(board: Board): void {
-		const oldShape = this.shape.map(row => [...row])
+		const oldShape = this.shape.map((row) => [...row]);
 		for (const y in this.shape) {
 			for (const x in this.shape[y]) {
 				this.shape[y][x] = oldShape[this.shape.length - 1 - +x][y];
@@ -51,25 +51,71 @@ export class Piece {
 
 		// https://tetris.fandom.com/wiki/SRS
 		const JLTSZ_WALL_KICK_DATA: number[][] = [
-			[[0, 0], [-1, 0], [-1,  1], [0, -2], [-1, -2]],
-			[[0, 0], [ 1, 0], [ 1, -1], [0,  2], [ 1,  2]],
-			[[0, 0], [ 1, 0], [ 1,  1], [0, -2], [ 1, -2]],
-			[[0, 0], [-1, 0], [-1, -1], [0,  2], [-1,  2]],
-		][this.rotation % 4]
+			[
+				[0, 0],
+				[-1, 0],
+				[-1, 1],
+				[0, -2],
+				[-1, -2]
+			],
+			[
+				[0, 0],
+				[1, 0],
+				[1, -1],
+				[0, 2],
+				[1, 2]
+			],
+			[
+				[0, 0],
+				[1, 0],
+				[1, 1],
+				[0, -2],
+				[1, -2]
+			],
+			[
+				[0, 0],
+				[-1, 0],
+				[-1, -1],
+				[0, 2],
+				[-1, 2]
+			]
+		][this.rotation % 4];
 
 		const I_WALL_KICK_DATA: number[][] = [
-			[[0, 0], [-2, 0], [ 1, 0], [-2, -1], [ 1,  2]],
-			[[0, 0], [-1, 0], [ 2, 0], [-1,  2], [ 2, -1]],
-			[[0, 0], [ 2, 0], [-1, 0], [ 2,  1], [-1, -2]],
-			[[0, 0], [ 1, 0], [-2, 0], [ 1, -2], [-2,  1]],
-		][this.rotation % 4]
+			[
+				[0, 0],
+				[-2, 0],
+				[1, 0],
+				[-2, -1],
+				[1, 2]
+			],
+			[
+				[0, 0],
+				[-1, 0],
+				[2, 0],
+				[-1, 2],
+				[2, -1]
+			],
+			[
+				[0, 0],
+				[2, 0],
+				[-1, 0],
+				[2, 1],
+				[-1, -2]
+			],
+			[
+				[0, 0],
+				[1, 0],
+				[-2, 0],
+				[1, -2],
+				[-2, 1]
+			]
+		][this.rotation % 4];
 
-		const WALL_KICK_DATA = this.shape.length === 4
-			? I_WALL_KICK_DATA
-			: JLTSZ_WALL_KICK_DATA;
+		const WALL_KICK_DATA = this.shape.length === 4 ? I_WALL_KICK_DATA : JLTSZ_WALL_KICK_DATA;
 
 		for (const [x, y] of WALL_KICK_DATA) {
-			this.move(board, x, y)
+			this.move(board, x, y);
 			if (!this.intersect(board)) {
 				++this.rotation;
 				return;
@@ -79,7 +125,7 @@ export class Piece {
 		this.shape = oldShape;
 	}
 
-	move(board: any, ox: number, oy:number): boolean {
+	move(board: any, ox: number, oy: number): boolean {
 		this.x += ox;
 		this.y += oy;
 
@@ -87,7 +133,7 @@ export class Piece {
 			this.x -= ox;
 			this.y -= oy;
 
-			return false
+			return false;
 		}
 
 		return true;
@@ -98,7 +144,7 @@ export class Piece {
 	}
 
 	drawOn(board: Board): Board {
-		const copyBoard = board.map(row=>[...row]);
+		const copyBoard = board.map((row) => [...row]);
 
 		for (const y in this.shape) {
 			for (const x in this.shape[y]) {
@@ -113,6 +159,6 @@ export class Piece {
 			}
 		}
 
-		return copyBoard
+		return copyBoard;
 	}
 }
