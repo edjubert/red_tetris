@@ -1,11 +1,16 @@
 services:
+  mariadb:
+    extends:
+      service: mariadb
+      file: ./back/compose.yml
+
   backend:
+    depends_on:
+      - mariadb
     extends:
       service: backend
       file: ./back/compose.yml
-#  psql:
-#    extends:
-#      service
+
   frontend:
     depends_on:
       - backend
