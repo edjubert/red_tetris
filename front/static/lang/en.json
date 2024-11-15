@@ -39,6 +39,8 @@
     "scores_name": "Name",
     "scores_score": "Score",
     "restart": "Restart",
-    "gameover": "Game Over"
+    "gameover": "Game Over",
+    "username": "Username",
+    "roomname": "Roomname"
   }
 }

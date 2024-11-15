@@ -80,13 +80,14 @@ export class Player {
 	}
 
 	applyTetriminos(): void {
-		this.layer = this.currentShape?.drawOn(this.layer) || []
+		this.layer = this.currentShape?.drawOn(this.layer) || [];
 		this.currentShape = undefined;
 
 		const filteredLayer = this.layer
 			.filter((row: number[]) => row.some((cell: number) => cell == 0 || cell == 8 || cell == 9));
 		const n = this.layer.length - filteredLayer.length;
 
+		console.log({n})
 		this.room.makeIndestructibleLines(n - 1, this);
 		this.score += [0, 100, 300, 500, 800][n]
 
@@ -178,8 +179,8 @@ export class Player {
 					score: this.score,
 					lines: this.lines
 				},
-				indestructibleLines: this.addedLinesNextTurn
-			})
+			}),
+			indestructibleLines: this.addedLinesNextTurn
 		});
 	}
 

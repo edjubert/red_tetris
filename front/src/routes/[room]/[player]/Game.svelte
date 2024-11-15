@@ -26,7 +26,7 @@
 		shape: []
 	};
 
-	let endPlayerList: { username: string; score: number }[] = [];
+	let endPlayerList: Score[] = [];
 	let isEndGame = false;
 
 	function handleConnect() {

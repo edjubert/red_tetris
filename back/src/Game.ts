@@ -36,6 +36,7 @@ export class Game {
 
 		for (const [_, player] of this.players) {
 			if (senderPlayer.client.id !== player.client.id) {
+				console.log('adding line', nbLines)
 				player.addIndestructibleLine(nbLines);
 			}
 		}
@@ -92,12 +93,12 @@ export class Game {
 
 			const list = [];
 			for (const {name, score} of this.gameOverList) {
-				list.unshift({name, score});
+				list.unshift({username: name, score});
 			}
 
 			for (const [_, { name, score, gameover}] of this.players) {
 				 if (!gameover) {
-					 list.unshift({ name, score});
+					 list.unshift({ username: name, score});
 				 }
 			}
 

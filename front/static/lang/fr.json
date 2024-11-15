@@ -39,6 +39,8 @@
     "scores_name": "Pseudo",
     "scores_score": "Score",
     "restart": "Recommencer",
-    "gameover": "Game Over"
+    "gameover": "Game Over",
+    "username": "Pseudo",
+    "roomname": "Salle"
   }
 }

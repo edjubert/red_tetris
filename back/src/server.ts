@@ -5,7 +5,6 @@ import { Client } from './Client';
 import { Player } from './Player';
 import { Room } from '../utils/types';
 import { CLIENT_EVENTS, IO_EVENTS, SOCKET_EVENTS } from '../utils/constants';
-import { inspect } from 'node:util';
 
 const logger = pino({
 	transport: {
@@ -75,7 +74,6 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 		client.on(`${CLIENT_EVENTS.START}:${roomname}`, () => {
 			if (room?.owner?.client?.id !== client.id) return;
 
-			console.log({startGameMode: room?.gameMode})
 			io.in(roomname).emit(`${CLIENT_EVENTS.START}:${roomname}`);
 
 			room.launch();
@@ -97,7 +95,6 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 		});
 
 		client.on(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, (gameMode: string) => {
-			console.log({gameMode, roomGameMode: gameMode})
 			const newGameMode = gameMode ?? room?.gameMode;
 			if (room?.owner?.client?.id === client.id) room.gameMode = newGameMode;
 			io.in(roomname).emit(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, room?.gameMode);

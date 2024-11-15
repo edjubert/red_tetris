@@ -3,38 +3,41 @@
 	import { _ } from '../../../services/i18n';
 	import { goto } from '$app/navigation';
 
-	export let room: string;
-	export let users: string[];
-	export let owner: boolean;
-	export let gameMode: string;
-	export let syncGameMode: (gameMode: string) => void;
+	let {
+		room,
+		users,
+		owner,
+		gameMode,
+		syncGameMode
+	}: {
+		room: string;
+		users: string[];
+		owner: boolean;
+		gameMode: string;
+		syncGameMode: (gameMode?: string) => void;
+	} = $props();
 </script>
 
 <div class="card">
 	<h1>{room}</h1>
+	<p>{users}</p>
+	<p>{gameMode}</p>
 	{#each users as user}
 		<div>- {user}</div>
 	{/each}
 
 	<div class="action {owner ? '' : 'disabled'}">
 		{#each ['slow', 'medium-slow', 'medium-fast', 'fast'] as action}
-			<input
-				type="radio"
-				id={action}
-				value={action}
-				bind:group={gameMode}
-				name="gameMode"
-				onchange={() => {
-					console.log({ newGameMode: gameMode, action });
-					syncGameMode(gameMode);
+			<button
+				class="red-button {action} {gameMode === action && 'isActive'} {owner ? '' : 'disabled'}"
+				onclick={() => {
+					if (!owner) return;
+					gameMode = action;
+					syncGameMode(action);
 				}}
-			/>
-
-			<label for={action}>
-				<button disabled={!owner} class="red-button {action} {owner ? '' : 'disabled'}">
-					<img src="/icons/game-mode/{action}.png" alt={action} />
-				</button>
-			</label>
+			>
+				<img src="/icons/game-mode/{action}.png" alt={action} />
+			</button>
 		{/each}
 	</div>
 
@@ -84,31 +87,35 @@
 		border-color: var(--theme-red);
 		color: var(--theme-mantle);
 	}
-	.action > label > .slow:focus,
-	.action > label > .slow:hover {
+	.action > .slow:focus,
+	.action > .slow.isActive,
+	.action > .slow:hover {
 		border-color: var(--theme-yellow);
 	}
-	.action > label > .medium-slow:hover,
-	.action > label > .medium-slow:focus {
+	.action > .medium-slow:hover,
+	.action > .medium-slow.isActive,
+	.action > .medium-slow:focus {
 		border-color: var(--theme-peach);
 	}
-	.action > label > .medium-fast:focus,
-	.action > label > .medium-fast:hover {
+	.action > .medium-fast:focus,
+	.action > .medium-fast.isActive,
+	.action > .medium-fast:hover {
 		border-color: var(--theme-maroon);
 	}
-	.action > label > .fast:focus,
-	.action > label > .fast:hover {
+	.action > .fast:focus,
+	.action > .fast.isActive,
+	.action > .fast:hover {
 		border-color: var(--theme-red);
 	}
 
-	.action > label > .disabled {
+	.action > .disabled {
 		transform: none !important;
 		box-shadow: 8px 8px var(--shadow) !important;
 		cursor: not-allowed;
 		border-color: var(--theme-mantle);
 		opacity: 0.6;
 	}
-	.action > label > .disabled:hover {
+	.action > .disabled:hover {
 		border-color: var(--theme-mantle);
 	}
 </style>

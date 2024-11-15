@@ -4,9 +4,9 @@
 	import { onMount } from 'svelte';
 	import Listener from '$lib/Listener.svelte';
 	import { goto } from '$app/navigation';
-	import LevelSelection from './LevelSelection.svelte';
 	import Game from './Game.svelte';
 	import type { ListenerHandler, Room } from '$lib/types';
+	import LevelSelection from './LevelSelection.svelte';
 
 	const { data } = $props();
 	let users = $state<string[]>([]);
@@ -15,7 +15,6 @@
 	let started = $state<boolean>(false);
 
 	const syncGameMode = (gameMode?: string): void => {
-		console.log('sync mode', gameMode);
 		if (browser) socket.emit(`gameMode:${data.room}`, gameMode);
 	};
 
@@ -38,7 +37,7 @@
 	};
 
 	const handleGameMode = (_gameMode: ListenerHandler) => {
-		gameMode = (_gameMode as Room).gameMode;
+		gameMode = _gameMode as string;
 	};
 
 	const handleStart = () => {
