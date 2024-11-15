@@ -1,15 +1,27 @@
 services:
   backend:
-    build:
-      context: ./back
-      dockerfile: Dockerfile
-    volumes:
-      - ./back/tmp/npm:/root/.npm:z
-      - ./back/src:/app:z
+    extends:
+      service: backend
+      file: ./back/compose.yml
+#  psql:
+#    extends:
+#      service
   frontend:
+    depends_on:
+      - backend
     build:
       context: ./front
       dockerfile: Dockerfile
-    volumes:
-      - ./front/tmp/npm:/root/./npm:z
-      - ./front/src:/app:z
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "4173:4173"
+
+networks:
+  external:
+      driver: default
+      ipam:
+          config:
+              - subnet: "172.20.0.0/16"
+volumes:
+  red-tetris-db:

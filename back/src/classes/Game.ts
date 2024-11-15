@@ -35,7 +35,6 @@ export class Game {
 
 		for (const [_, player] of this.players) {
 			if (senderPlayer.client.id !== player.client.id) {
-				console.log('adding line', nbLines);
 				player.addIndestructibleLine(nbLines);
 			}
 		}

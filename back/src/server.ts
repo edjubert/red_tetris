@@ -9,7 +9,7 @@ import { logger } from '../utils/logger';
 
 const io = new Server({
 	cors: {
-		origin: 'http://localhost:5173'
+		origin: 'http://frontend:5173'
 	}
 });
 
@@ -27,3 +27,4 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 });
 
 io.listen(PORT);
+logger.info(`Server listening on port ${PORT}`);

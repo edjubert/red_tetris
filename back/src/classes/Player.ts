@@ -87,7 +87,6 @@ export class Player {
 		);
 		const n = this.layer.length - filteredLayer.length;
 
-		console.log({ n });
 		this.room.makeIndestructibleLines(n - 1, this);
 		this.score += [0, 100, 300, 500, 800][n];
 

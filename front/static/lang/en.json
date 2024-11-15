@@ -1,46 +1,46 @@
 {
-  "home": {
-    "topic": "Red Tetris",
-    "subtopic": "A multiplayer tetris made with Svelte",
-    "username": "username",
-    "roomname": "room name",
-    "play": "PLAY"
-  },
-  "header": {
-    "home": "home"
-  },
-  "layout": {
-    "disconnected": "Disconnected"
-  },
-  "room": {
-    "waiting_to_start": "Waiting for the owner to start the game",
-    "leave": "Leave",
-    "start": "Start"
-  },
-  "rooms": {
-    "user_scores": "User scores",
-    "no_game_yet": "No game yet",
-    "create_or_join_room": "Create or join room",
-    "create_or_join_button": "Create / Join",
-    "roomname_placeholder": "Roomname",
-    "room_list":"Room list",
-    "no_room_available": "Currently no room available",
-    "best_scores": "Best scores",
-    "join": "Join"
-  },
-  "game": {
-    "high_score": "High scores",
-    "score": "Score",
-    "lines": "Lines",
-    "incoming_lines": "Incoming lines",
-    "leave": "Leave",
-    "scores_label": "Scores",
-    "scores_top": "Top",
-    "scores_name": "Name",
-    "scores_score": "Score",
-    "restart": "Restart",
-    "gameover": "Game Over",
-    "username": "Username",
-    "roomname": "Roomname"
-  }
+	"home": {
+		"topic": "Red Tetris",
+		"subtopic": "A multiplayer tetris made with Svelte",
+		"username": "username",
+		"roomname": "room name",
+		"play": "PLAY"
+	},
+	"header": {
+		"home": "home"
+	},
+	"layout": {
+		"disconnected": "Disconnected"
+	},
+	"room": {
+		"waiting_to_start": "Waiting for the owner to start the game",
+		"leave": "Leave",
+		"start": "Start"
+	},
+	"rooms": {
+		"user_scores": "User scores",
+		"no_game_yet": "No game yet",
+		"create_or_join_room": "Create or join room",
+		"create_or_join_button": "Create / Join",
+		"roomname_placeholder": "Roomname",
+		"room_list": "Room list",
+		"no_room_available": "Currently no room available",
+		"best_scores": "Best scores",
+		"join": "Join"
+	},
+	"game": {
+		"high_score": "High scores",
+		"score": "Score",
+		"lines": "Lines",
+		"incoming_lines": "Incoming lines",
+		"leave": "Leave",
+		"scores_label": "Scores",
+		"scores_top": "Top",
+		"scores_name": "Name",
+		"scores_score": "Score",
+		"restart": "Restart",
+		"gameover": "Game Over",
+		"username": "Username",
+		"roomname": "Roomname"
+	}
 }
