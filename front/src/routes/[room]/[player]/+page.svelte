@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { _ } from '../../../services/i18n';
 	import { socket, user } from '$lib/user';
 	import { onMount } from 'svelte';
 	import Listener from '$lib/Listener.svelte';
@@ -12,10 +11,11 @@
 	const { data } = $props();
 	let users = $state<string[]>([]);
 	let owner = $state<boolean>(false);
-	let gameMode = $state<string>('');
+	let gameMode = $state<string>('medium-slow');
 	let started = $state<boolean>(false);
 
 	const syncGameMode = (gameMode?: string): void => {
+		console.log('sync mode', gameMode);
 		if (browser) socket.emit(`gameMode:${data.room}`, gameMode);
 	};
 

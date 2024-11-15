@@ -9,7 +9,6 @@
 	import '$lib/style.css';
 
 	async function setup() {
-		console.log('setup');
 		return await Promise.allSettled([setupI18n()]);
 	}
 	const setupResult = setup();

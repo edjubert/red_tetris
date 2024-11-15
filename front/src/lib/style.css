@@ -25,17 +25,18 @@
 
 html {
     background: var(--back-0);
-    margin-top: 150px;
+    margin-top: 100px;
+    height: 80%;
 }
 
 body {
     margin: 0;
     display: grid;
     place-items: center;
+    height: 90%;
 }
 
 html, body {
-    height: 100%;
     color: var(--text);
 }
 

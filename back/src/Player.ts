@@ -103,6 +103,7 @@ export class Player {
 
 	applyEvent(keys: string[]): void {
 		if (this.currentShape === undefined) return;
+
 		let newTetriminos = false;
 		const apply = (key: string): void => {
 			switch (key) {
@@ -133,10 +134,10 @@ export class Player {
 				default:
 					return;
 			}
-
-			for (const key of keys) apply(key)
-			this.draw(!this.isBot || newTetriminos);
 		}
+
+		for (const key of keys) apply(key)
+		this.draw(!this.isBot || newTetriminos);
 	}
 
 	sound(track: Sound): void {
@@ -152,6 +153,7 @@ export class Player {
 			return 20;
 		})
 
+
 		this.client.in(`${this.room.name}+human`).emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 			clientId: this.client.id,
 			heights,
@@ -160,7 +162,7 @@ export class Player {
 				score: this.score,
 				lines: this.lines,
 			}
-			})
+		})
 	}
 
 	sendGameData(): void {

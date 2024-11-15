@@ -86,23 +86,24 @@
 	});
 </script>
 
-<svelte:window on:keydown={(e) => socket.emit(`event:${roomname}`, e.key)} />
+<svelte:window onkeydown={(e) => socket.emit(`event:${roomname}`, e.key)} />
 
-<Listener on="owner:{roomname}" handler={handleOwner} />
-<Listener on="notauthorized:{roomname}" handler={handleNotAuthorized} />
-<Listener on="connect" handler={handleConnect} />
-<Listener on="endgame:{roomname}" handler={handleEndgame} />/
-<Listener on="restart:{roomname}" handler={handleRestart} />
-<Listener on="gameInfo:{roomname}" handler={handleGameInfo} />
-<Listener on="sound:{roomname}" handler={handleSound} />
+<Listener handler={handleOwner} on="owner:{roomname}" />
+<Listener handler={handleNotAuthorized} on="notauthorized:{roomname}" />
+<Listener handler={handleConnect} on="connect" />
+<Listener handler={handleEndgame} on="endgame:{roomname}" />
+<Listener handler={handleRestart} on="restart:{roomname}" />
+<Listener handler={handleGameInfo} on="gameInfo:{roomname}" />
+<Listener handler={handleSound} on="sound:{roomname}" />
 
 <main>
 	<button class="mute-button" on:click={() => muted.set(!$muted)}>
 		<img src={`/icons/${$muted ? 'no-sound.png' : 'sound.png'}`} alt="sound" />
 	</button>
+
 	<aside class="others">
 		{#each [...usersBoard.entries()] as [_, { username, heights, scores, gameover }]}
-			<div>
+			<div class="card">
 				{username}<br />
 				{scores.score}
 				<div class="small-board {gameover ? 'small-gameover' : ''}">
@@ -136,18 +137,32 @@
 		</div>
 	</div>
 
-	<aside class="self">
-		<h1>{roomname}</h1>
-		<h2>{$user}</h2>
+	<aside class="self card">
+		<div class="title">
+			<p>{$_('game.roomname')}</p>
+			<h3>{roomname}</h3>
+		</div>
+		<div class="subtitle">
+			<p>{$_('game.username')}</p>
+			<h3>{$user}</h3>
+		</div>
 		<div>
-			{$_('game.high_score')}<br />
-			0<br />
-			{$_('game.score')}<br />
-			{score}<br />
-			{$_('game.lines')}<br />
-			{lines}<br />
-			{$_('game.incoming_lines')}<br />
-			{indestructibleLines}<br />
+			<div class="score">
+				{$_('game.high_score')}<br />
+				0<br />
+			</div>
+			<div class="score">
+				{$_('game.score')}<br />
+				{score}<br />
+			</div>
+			<div class="score">
+				{$_('game.lines')}<br />
+				{lines}<br />
+			</div>
+			<div class="score">
+				{$_('game.incoming_lines')}<br />
+				{indestructibleLines}<br />
+			</div>
 			<br />
 
 			<div class="board next-piece">
@@ -198,10 +213,9 @@
 <style>
 	main {
 		overflow: hidden;
-		width: 100%;
-		height: 100%;
+		width: 100vw;
+		height: 80%;
 		background: var(--theme-base);
-		padding: 20px;
 		display: flex;
 		gap: 20px;
 		justify-content: center;
@@ -267,11 +281,11 @@
 		aspect-ratio: 1/1;
 		border-radius: 1px;
 		transition: 0.04s;
-		background: var(--theme-subtext1);
-		--shadow: inset 0 0 0 5px var(--theme-subtext2), inset -5px -5px var(--theme-subtext2);
+		background: var(--theme-surface0);
+		--shadow: inset 0 0 0 5px var(--theme-surface1), inset -5px -5px var(--theme-surface1);
 		box-shadow:
 			var(--shadow),
-			0 0 6px var(--theme-subtext1);
+			0 0 6px var(--theme-surface2);
 	}
 	.score-div {
 		display: flex;
@@ -283,35 +297,52 @@
 			var(--theme-overlay0) 0%,
 			var(--theme-overlay1) 49%
 		);
-		--color: var(--theme-base);
+		color: var(--theme-base);
 	}
 	.cell-1 {
-		--color: var(--theme-rosewater);
+		background-color: var(--theme-rosewater);
+		border-color: var(--theme-rosewater);
+		box-shadow: var(--theme-rosewater);
 	}
 	.cell-2 {
-		--color: var(--theme-flamingo);
+		background-color: var(--theme-flamingo);
+		border-color: var(--theme-flamingo);
+		box-shadow: var(--theme-flamingo);
 	}
 	.cell-3 {
-		--color: var(--theme-pink);
+		background-color: var(--theme-pink);
+		border-color: var(--theme-pink);
+		box-shadow: var(--theme-pink);
 	}
 	.cell-4 {
-		--color: var(--theme-mauve);
+		background-color: var(--theme-mauve);
+		border-color: var(--theme-mauve);
+		box-shadow: var(--theme-mauve);
 	}
 	.cell-5 {
-		--color: var(--theme-red);
+		background-color: var(--theme-red);
+		border-color: var(--theme-red);
+		box-shadow: var(--theme-red);
 	}
 	.cell-6 {
-		--color: var(--theme-maroon);
+		background-color: var(--theme-maroon);
+		border-color: var(--theme-maroon);
+		box-shadow: var(--theme-maroon);
 	}
 	.cell-7 {
-		--color: var(--theme-peach);
+		background-color: var(--theme-peach);
+		border-color: var(--theme-peach);
+		box-shadow: var(--theme-peach);
 	}
 	.cell-8 {
-		--color: var(--theme-yellow);
+		background-color: var(--theme-lavender);
+		border-color: var(--theme-lavender);
+		box-shadow: var(--theme-lavender);
+		opacity: 0.3;
 	}
 	.cell-0,
 	.cell-8 {
-		--shadow-color: #0d0d171e;
+		--shadow-color: var(--theme-mantle);
 		box-shadow: var(--theme-subtext2);
 	}
 	.cell-0 {
@@ -357,6 +388,15 @@
 		gap: 30px;
 	}
 
+	.score {
+		margin-top: 50px;
+		background-color: var(--theme-surface1);
+		border-radius: 5px;
+		padding: 5px;
+		width: 100%;
+		box-shadow: 0 0 40px 0 var(--theme-base);
+	}
+
 	.small-board {
 		display: flex;
 		aspect-ratio: 1/2;
@@ -379,7 +419,7 @@
 		width: 100%;
 	}
 	.self {
-		max-width: 30vw;
+		max-width: 20vw;
 	}
 	.next-piece {
 		width: 4rem;
@@ -409,9 +449,9 @@
 	}
 	.card-endgame {
 		box-shadow: 0 0 50px -15px var(--grey-back-0);
-		position: fixed; /* Stay in place */
-		z-index: 9999; /* Place in front of other elements */
-		overflow: auto; /* Enable scroll */
+		position: fixed;
+		z-index: 9999;
+		overflow: auto;
 		top: 50%;
 		left: 50%;
 		animation: 0.5s endgame-anim cubic-bezier(0.42, 0, 0.21, 1.4) forwards;

@@ -9,6 +9,9 @@
   "header": {
     "home": "home"
   },
+  "layout": {
+    "disconnected": "Disconnected"
+  },
   "room": {
     "waiting_to_start": "Waiting for the owner to start the game",
     "leave": "Leave",
@@ -18,6 +21,7 @@
     "user_scores": "User scores",
     "no_game_yet": "No game yet",
     "create_or_join_room": "Create or join room",
+    "create_or_join_button": "Create / Join",
     "roomname_placeholder": "Roomname",
     "room_list":"Room list",
     "no_room_available": "Currently no room available",
@@ -29,6 +33,12 @@
     "score": "Score",
     "lines": "Lines",
     "incoming_lines": "Incoming lines",
-    "leave": "Leave"
+    "leave": "Leave",
+    "scores_label": "Scores",
+    "scores_top": "Top",
+    "scores_name": "Name",
+    "scores_score": "Score",
+    "restart": "Restart",
+    "gameover": "Game Over"
   }
 }

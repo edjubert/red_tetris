@@ -1,4 +1,4 @@
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import pino from 'pino';
 import { Game } from './Game';
 import { Client } from './Client';
@@ -30,13 +30,14 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 
 	socket.on(SOCKET_EVENTS.GET_ROOM_LIST, () => sendRoomList(socket));
 
+	socket.on(SOCKET_EVENTS.GET_SCORES_LIST, ({username}: {username: string}) => sendScores(socket, username));
+
 	socket.on(SOCKET_EVENTS.INIT_GAME, ({roomname}:{roomname: string}): void => {
-		logger.info(`init game ${roomname}`)
 		const currentRoom = rooms.get(roomname);
 		if (currentRoom === undefined || !currentRoom?.players.has(socket.id)) socket.emit(`${SOCKET_EVENTS.ERR_NOT_AUTHORIZED}:${roomname}`)
 	})
 
-	socket.on(SOCKET_EVENTS.JOIN_ROOM, ({roomname, user, isBot = false}: {roomname: string; user: string; isBot: boolean}) => {
+	socket.on(SOCKET_EVENTS.JOIN_ROOM, ({roomname, user, isBot = false}: {roomname: string; user: string;  isBot: boolean}) => {
 		if (!/^[a-z0-9_-]{1,16}$/i.test(user) || user === undefined) {
 			socket.emit(SOCKET_EVENTS.ERR_USERNAME_ERROR, 'username required');
 			return ;
@@ -74,6 +75,7 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 		client.on(`${CLIENT_EVENTS.START}:${roomname}`, () => {
 			if (room?.owner?.client?.id !== client.id) return;
 
+			console.log({startGameMode: room?.gameMode})
 			io.in(roomname).emit(`${CLIENT_EVENTS.START}:${roomname}`);
 
 			room.launch();
@@ -95,6 +97,7 @@ io.on(IO_EVENTS.CONNECTION, (socket) => {
 		});
 
 		client.on(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, (gameMode: string) => {
+			console.log({gameMode, roomGameMode: gameMode})
 			const newGameMode = gameMode ?? room?.gameMode;
 			if (room?.owner?.client?.id === client.id) room.gameMode = newGameMode;
 			io.in(roomname).emit(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, room?.gameMode);
@@ -115,6 +118,11 @@ function sendRoomList(io: Server): void {
 	}
 
 	io.emit(IO_EVENTS.ROOM_LIST, roomList);
+}
+
+const sendScores = async (socket: Socket, username: string): Promise<void>  => {
+	// TODO implement
+	socket.emit('scoresList', {userScores: [], bestScores: []})
 }
 
 io.listen(PORT);

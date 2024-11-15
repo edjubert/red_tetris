@@ -19,7 +19,7 @@ export class Game {
 	private tickPerSeconds: number;
 	private timeout: NodeJS.Timeout | undefined;
 	
-	constructor(io:Server, name: string, gameMode: GameMode = "earth") {
+	constructor(io:Server, name: string, gameMode: GameMode = 'slow') {
 		this.io = io;
 		this.name = name;
 		this.owner = undefined;
@@ -56,7 +56,6 @@ export class Game {
 	}
 
 	setOwner(owner: Player | undefined): void {
-		console.log('OWNER', this.name)
 		this.owner = owner;
 		owner?.client?.emit?.(`${CLIENT_EVENTS.OWNER}:${this.name}`)
 	}
@@ -139,10 +138,14 @@ export class Game {
 				"fast": 13,
 				"medium-fast": 6,
 				"medium-slow": 2.5,
-				"slow": 1.25
+				"slow": 0.25
 			}
 
+			if (this.gameMode !== 'fast' && this.gameMode!== 'medium-fast' && this.gameMode !== 'medium-slow' && this.gameMode !== 'slow') {
+				this.gameMode = 'medium-slow';
+			}
 			this.tickPerSeconds = ticks[this.gameMode];
+
 
 			const loop = () => {
 				this.checkEndGame(isSolo);
@@ -155,6 +158,7 @@ export class Game {
 					this.timeout = setTimeout(loop, 1000/this.tickPerSeconds);
 				}
 			}
+			loop();
 		}
 	}
 }

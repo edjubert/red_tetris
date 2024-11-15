@@ -36,7 +36,7 @@
 <Listener handler={handleScoresList} on="scoresList" />
 <Listener handler={handleRoomList} on="roomList" />
 
-<main class="main">
+<main>
 	<div class="hflex">
 		<div class="card scores user-scores">
 			<h2>{$_('rooms.user_scores')}</h2>
@@ -55,7 +55,7 @@
 		<div class="vflex">
 			<form
 				class="card create-room"
-				on:submit={(e) => {
+				onsubmit={(e) => {
 					e.preventDefault();
 					if (!roominput.ok()) return;
 					goto(`/${roominput.getValue().toLowerCase()}/${$user}`, { replaceState: true });
@@ -68,7 +68,7 @@
 					placeholder={$_('rooms.roomname_placeholder')}
 					verify={verifyInput}
 				/>
-				<button class="red-button">{$_('rooms.join')}</button>
+				<button class="red-button">{$_('rooms.create_or_join_button')}</button>
 			</form>
 
 			<div class="card room-list">
@@ -76,8 +76,8 @@
 				{#each roomList as room}
 					<div class="room-card">
 						<p class="room-list-title">{room.name}</p>
-						<p class="room-number">{room.nbPlayer}</p>
-						<button class="red-button room-button" on:click={() => goto(`/${room.name}/${$user}`)}>
+						<p class="room-number">{room.nbOfPlayers}</p>
+						<button class="red-button room-button" onclick={() => goto(`/${room.name}/${$user}`)}>
 							{$_('rooms.join')}
 						</button>
 					</div>

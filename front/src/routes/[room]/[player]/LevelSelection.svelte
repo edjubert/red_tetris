@@ -24,11 +24,14 @@
 				value={action}
 				bind:group={gameMode}
 				name="gameMode"
-				onchange={() => syncGameMode(gameMode)}
+				onchange={() => {
+					console.log({ newGameMode: gameMode, action });
+					syncGameMode(gameMode);
+				}}
 			/>
 
 			<label for={action}>
-				<button class="red-button {action}">
+				<button disabled={!owner} class="red-button {action} {owner ? '' : 'disabled'}">
 					<img src="/icons/game-mode/{action}.png" alt={action} />
 				</button>
 			</label>
@@ -67,12 +70,6 @@
 		width: 100%;
 	}
 
-	.disabled label {
-		transform: none !important;
-		box-shadow: 8px 8px var(--shadow) !important;
-		cursor: not-allowed;
-	}
-
 	.card:hover,
 	.action > .red-button:hover {
 		border-color: var(--theme-rosewater);
@@ -102,5 +99,16 @@
 	.action > label > .fast:focus,
 	.action > label > .fast:hover {
 		border-color: var(--theme-red);
+	}
+
+	.action > label > .disabled {
+		transform: none !important;
+		box-shadow: 8px 8px var(--shadow) !important;
+		cursor: not-allowed;
+		border-color: var(--theme-mantle);
+		opacity: 0.6;
+	}
+	.action > label > .disabled:hover {
+		border-color: var(--theme-mantle);
 	}
 </style>

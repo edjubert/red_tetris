@@ -4,10 +4,13 @@
     "subtopic": "Un tetris multijoueur écrit avec Svelte",
     "username": "pseudo",
     "roomname": "nom salle",
-    "play": "JOUER"
+    "play": "Jouer"
   },
   "header": {
     "home": "Accueil"
+  },
+  "layout": {
+    "disconnected": "Déconnecté"
   },
   "room": {
     "waiting_to_start": "En attente que le maitre du jeu commence",
@@ -18,6 +21,7 @@
     "user_scores": "Scores de l'utilisateur",
     "no_game_yet": "Pas de partie",
     "create_or_join_room": "Crées ou rejoins une partie",
+    "create_or_join_button": "Créer / Rejoindre",
     "roomname_placeholder": "Nom de partie",
     "room_list":"Liste des parties",
     "no_room_available": "Il y a actuellement aucune partie en cours",
@@ -29,6 +33,12 @@
     "score": "Score",
     "lines": "Lignes",
     "incoming_lines": "Lignes à venir",
-    "leave": "Partir"
+    "leave": "Partir",
+    "scores_label": "Scores",
+    "scores_top": "Meilleurs",
+    "scores_name": "Pseudo",
+    "scores_score": "Score",
+    "restart": "Recommencer",
+    "gameover": "Game Over"
   }
 }

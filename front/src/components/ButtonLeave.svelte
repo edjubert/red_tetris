@@ -13,3 +13,11 @@
 >
 	{$_('game.leave')}
 </button>
+
+<style>
+	.red-button:hover {
+		border-color: var(--theme-red);
+		background-color: var(--theme-red);
+		color: var(--theme-mantle);
+	}
+</style>
