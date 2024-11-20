@@ -39,7 +39,7 @@ const clientStart = (io: Server, client: Client, rooms: Map<string, Game>, room:
 	sendRoomList(io, rooms);
 }
 
-const clientRestart = (io: Server, conn: PoolConnection, client: Client, rooms: Map<string, Game>, room: Game | undefined, roomname: string, user: string, isBot: boolean) => () => {
+const clientRestart = (io: Server, conn: PoolConnection, client: Client, rooms: Map<string, Game>, room: Game | undefined, roomname: string) => () => {
 	if (room?.owner?.client?.id !== client.id) return;
 
 	sendRoomList(io, rooms)
@@ -48,11 +48,9 @@ const clientRestart = (io: Server, conn: PoolConnection, client: Client, rooms: 
 	for (const [_, player] of room.players) player.client.clearListeners();
 
 	room.players = new Map<string, Player>();
-	room.stopInterval();
 
 	rooms.set(roomname, new Game(io, conn, roomname, room.gameMode));
 	room = rooms.get(roomname);
-	room?.addPlayer(user, isBot, client);
 
 	clientStart(io, client, rooms, room, roomname)
 }
@@ -88,7 +86,7 @@ export const handleJoinRoom =
 			room?.sendUsersList();
 
 			client.on(`${CLIENT_EVENTS.START}:${roomname}`, clientStart(io, client, rooms, room, roomname));
-			client.on(`${CLIENT_EVENTS.RESTART}:${roomname}`, clientRestart(io, conn, client, rooms, room, roomname, user, isBot));
+			client.on(`${CLIENT_EVENTS.RESTART}:${roomname}`, clientRestart(io, conn, client, rooms, room, roomname));
 			client.on(`${CLIENT_EVENTS.GAME_MODE}:${roomname}`, clientGameMode(io, client, room, roomname));
 			client.on(CLIENT_EVENTS.LEAVE, removePlayer);
 			client.on(CLIENT_EVENTS.DISCONNECT, removePlayer);

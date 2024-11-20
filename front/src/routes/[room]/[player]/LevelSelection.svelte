@@ -53,7 +53,12 @@
 		</button>
 
 		{#if owner}
-			<button class="red-button start" onclick={() => socket.emit(`start:${room}`)}>
+			<button
+				class="red-button start"
+				onclick={() => {
+					socket.emit(`start:${room}`);
+				}}
+			>
 				{$_('room.start')}
 			</button>
 		{/if}
