@@ -165,7 +165,7 @@ export class Player {
 	}
 
 	sendGameData(): void {
-		const nextShape = this.sequence.get(this.currentShapeIndex);
+		const nextShape = this.sequence.get(this.currentShapeIndex + 1);
 
 		this.client.emit(`${CLIENT_EVENTS.GAME_INFO}:${this.room.name}`, {
 			clientId: this.client.id,
