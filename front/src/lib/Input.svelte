@@ -2,16 +2,18 @@
 	export let verify, placeholder, maxlength;
 
 	let input: HTMLInputElement;
-	let error: Error;
+	let error: Error | undefined;
 	let value = '';
 
 	export const ok = (): boolean => {
 		const { valid, err } = verify(getValue());
+		if (valid) {
+			error = undefined;
+			return true;
+		}
+
 		if (!valid) {
 			error = err;
-		}
-		if (!error) {
-			return true;
 		}
 
 		input.animate([], { duration: 400 });
@@ -33,6 +35,18 @@
 	export const focus = (): void => {
 		input.focus();
 	};
+
+	const onInput = async (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+		if (!e.target) {
+			error = new Error('no target');
+		}
+		const { value: eValue } = e.target as HTMLInputElement;
+		const { valid, err } = verify(eValue);
+		if (!valid) {
+			error = err;
+		}
+		value = eValue;
+	};
 </script>
 
 <div>
@@ -44,19 +58,7 @@
 		bind:value
 		class="red-input"
 		{maxlength}
-		on:input={async (e) => {
-			if (!e.target) {
-				error = new Error('no target');
-			}
-			const { value } = e.target as HTMLInputElement;
-			const { valid, err } = verify(value);
-			if (!valid) {
-				error = err;
-			}
-		}}
+		on:input={onInput}
 		{placeholder}
 	/>
 </div>
-
-<style lang="css">
-</style>

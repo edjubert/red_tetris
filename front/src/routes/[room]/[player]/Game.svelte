@@ -10,6 +10,7 @@
 	import type { GameInfo, ListenerHandler, Score } from '$lib/types';
 
 	export let roomname: string;
+	export let restart: () => void;
 	let usersBoard = new Map();
 	let gameover = false;
 
@@ -42,8 +43,9 @@
 	const handleNotAuthorized = () => {
 		goto('/rooms');
 	};
-	const handleRestart = () => {
-		goto(`${roomname}/${$user}`);
+	const handleRestart = (playerList: ListenerHandler) => {
+		handleEndgame(playerList);
+		restart();
 	};
 
 	const handleGameInfo = (data: ListenerHandler) => {
@@ -138,14 +140,8 @@
 	</div>
 
 	<aside class="self card">
-		<div class="title">
-			<p>{$_('game.roomname')}</p>
-			<h3>{roomname}</h3>
-		</div>
-		<div class="subtitle">
-			<p>{$_('game.username')}</p>
-			<h3>{$user}</h3>
-		</div>
+		<h3>{roomname}</h3>
+		<h3>{$user}</h3>
 		<div>
 			<div class="score">
 				{$_('game.high_score')}<br />
@@ -230,7 +226,7 @@
 		cursor: pointer;
 	}
 	.mute-button img {
-		height: 25px;
+		height: 50px;
 	}
 	.others {
 		max-width: 15vw;
@@ -389,7 +385,7 @@
 	}
 
 	.score {
-		margin-top: 50px;
+		margin-top: 20px;
 		background-color: var(--theme-surface1);
 		border-radius: 5px;
 		padding: 5px;

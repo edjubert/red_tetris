@@ -41,6 +41,8 @@ const clientStart = (io: Server, client: Client, rooms: Map<string, Game>, room:
 
 const clientRestart = (io: Server, conn: PoolConnection, client: Client, rooms: Map<string, Game>, room: Game | undefined, roomname: string, user: string, isBot: boolean) => () => {
 	if (room?.owner?.client?.id !== client.id) return;
+
+	sendRoomList(io, rooms)
 	io.in(roomname).emit(`${CLIENT_EVENTS.RESTART}:${roomname}`);
 
 	for (const [_, player] of room.players) player.client.clearListeners();
@@ -51,6 +53,8 @@ const clientRestart = (io: Server, conn: PoolConnection, client: Client, rooms: 
 	rooms.set(roomname, new Game(io, conn, roomname, room.gameMode));
 	room = rooms.get(roomname);
 	room?.addPlayer(user, isBot, client);
+
+	clientStart(io, client, rooms, room, roomname)
 }
 
 const clientGameMode = (io: Server, client: Client, room: Game|undefined, roomname: string) => (gameMode: string) => {

@@ -65,10 +65,6 @@
 {/if}
 
 <style>
-	input[type='radio'] {
-		display: none;
-	}
-
 	.red-button img {
 		width: 100%;
 	}

@@ -2,7 +2,7 @@
 	import { socket } from '$lib/user';
 	import { _ } from '../services/i18n';
 
-	let roomname = $props();
+	let { roomname } = $props();
 </script>
 
 <button

@@ -48,6 +48,11 @@
 		owner = true;
 	};
 
+	const handleRestart = () => {
+		started = false;
+		if (browser) handleJoinRoom();
+	};
+
 	onMount(() => {
 		if (browser) handleJoinRoom();
 		return () => {
@@ -68,6 +73,6 @@
 	{#if !started}
 		<LevelSelection room={data.room} {users} {gameMode} {owner} {syncGameMode} />
 	{:else}
-		<Game roomname={data.room} />
+		<Game restart={handleRestart} roomname={data.room} />
 	{/if}
 </main>
