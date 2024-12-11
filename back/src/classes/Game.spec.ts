@@ -2,7 +2,7 @@ import { describe, test, expect, it, vi } from 'vitest';
 import { Game } from './Game';
 import { Server } from 'socket.io';
 import { Client } from './Client';
-// @ts-ignore
+// @ts-expect-error the library has an any that needs to be updated
 import { SocketServerMock } from 'socket.io-mock-ts';
 import mariadb, { PoolConnection } from 'mariadb';
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, test } from 'vitest';
 import { emptyBoard, Player } from './Player';
 import { Server } from 'socket.io';
-// @ts-ignore
+// @ts-expect-error the library has an any that needs to be updated
 import { SocketServerMock } from 'socket.io-mock-ts';
 import { Game } from './Game';
 import { TETRIMINOS } from './Tetriminos';

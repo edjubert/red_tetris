@@ -19,7 +19,7 @@ const pool = mariadb.createPool({
 });
 
 export const createSocketServer = (io: Server) => {
-	let rooms = new Map<string, Game>();
+	const rooms = new Map<string, Game>();
 
 	io.on(IO_EVENTS.CONNECTION, async (socket) => {
 		logger.info('User connected');

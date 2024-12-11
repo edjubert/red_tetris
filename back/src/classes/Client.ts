@@ -3,7 +3,7 @@ import { Socket } from 'socket.io';
 export class Client {
 	private socket: Socket;
 	private readonly listeners: any[];
-	private readonly rooms: any[];
+	private readonly rooms: string[];
 
 	constructor(socket: Socket) {
 		this.socket = socket;

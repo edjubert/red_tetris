@@ -103,7 +103,7 @@ export const handleJoinRoom =
 			rooms.set(roomname, new Game(io, roomname));
 		}
 
-		let room = rooms.get(roomname);
+		const room = rooms.get(roomname);
 		if (room?.started === true) {
 			socket.emit(SOCKET_EVENTS.ERR_ROOMNAME_ERROR, `room '${roomname}' is already started`);
 			return;
