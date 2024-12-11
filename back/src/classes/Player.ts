@@ -33,7 +33,6 @@ export class Player {
 	name: string;
 	gameover: boolean;
 	score: number;
-	isBot: boolean;
 
 	private io: Server;
 	private sequence: Sequence;
@@ -46,14 +45,13 @@ export class Player {
 	private addedLinesNextTurn: number;
 
 
-	constructor(io: Server, userName: string, isBot: boolean, client: Client, room: Game) {
+	constructor(io: Server, userName: string, client: Client, room: Game) {
 		this.io = io;
 		this.name = userName;
 		this.client = client;
 		this.room = room;
 		this.layer = emptyBoard();
 		this.board = emptyBoard();
-		this.isBot = isBot;
 		this.sequence = room.sequence;
 
 		this.currentShapeIndex = 0;
@@ -137,7 +135,7 @@ export class Player {
 		};
 
 		for (const key of keys) apply(key);
-		this.draw(!this.isBot || newTetriminos);
+		this.draw(newTetriminos);
 	}
 
 	sound(track: Sound): void {
@@ -172,9 +170,7 @@ export class Player {
 			currentShape: this.currentShape,
 			nextShape,
 			board: this.board,
-			...(this.isBot
-				? {}
-				: {
+			...({
 						scores: {
 							score: this.score,
 							lines: this.lines
@@ -220,6 +216,6 @@ export class Player {
 		const newTetriminos = !this?.currentShape?.tick?.(this.layer);
 		if (newTetriminos) this.newTetriminos();
 
-		this.draw(newTetriminos || !this.isBot);
+		this.draw(newTetriminos);
 	}
 }

@@ -49,7 +49,7 @@ const clientRestart = (io: Server, conn: PoolConnection, client: Client, rooms: 
 
 	room.players = new Map<string, Player>();
 
-	rooms.set(roomname, new Game(io, conn, roomname, room.gameMode));
+	rooms.set(roomname, new Game(io, roomname, room.gameMode));
 	room = rooms.get(roomname);
 
 	clientStart(io, client, rooms, room, roomname)
@@ -63,13 +63,13 @@ const clientGameMode = (io: Server, client: Client, room: Game|undefined, roomna
 
 export const handleJoinRoom =
 	(io: Server, socket: Socket, conn: PoolConnection, rooms: Map<string, Game>) =>
-		async ({ roomname, user, isBot = false }: { roomname: string; user: string; isBot: boolean }) => {
+		async ({ roomname, user }: { roomname: string; user: string }) => {
 			if (!verifyUserAndRoom(socket, user, roomname)) {
 				return;
 			}
 
 			if (!rooms.has(roomname)) {
-				rooms.set(roomname, new Game(io, conn, roomname));
+				rooms.set(roomname, new Game(io, roomname));
 			}
 
 			let room = rooms.get(roomname);
@@ -81,7 +81,7 @@ export const handleJoinRoom =
 			const client = new Client(socket);
 			const removePlayer = removePlayerFunc(io, conn, client, rooms, roomname, room);
 
-			room?.addPlayer(user, isBot, client);
+			room?.addPlayer(user, client);
 			sendRoomList(io, rooms);
 			room?.sendUsersList();
 

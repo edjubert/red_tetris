@@ -19,9 +19,8 @@ export class Game {
 	private readonly io: Server;
 	private tickPerSeconds: number;
 	private timeout: NodeJS.Timeout | undefined;
-	private conn: PoolConnection;
 
-	constructor(io: Server, conn: PoolConnection, name: string, gameMode: GameMode = 'slow') {
+	constructor(io: Server, name: string, gameMode: GameMode = 'slow') {
 		this.io = io;
 		this.name = name;
 		this.owner = undefined;
@@ -31,7 +30,6 @@ export class Game {
 		this.players = new Map<string, Player>();
 		this.tickPerSeconds = 0;
 		this.gameOverList = [];
-		this.conn = conn;
 	}
 
 	makeIndestructibleLines(nbLines: number, senderPlayer: Player): void {
@@ -46,11 +44,13 @@ export class Game {
 
 	sendUsersList() {
 		const users = this.getPlayersList().map((player) => {
+			console.log({clientId: player.client.id, ownerId: this.owner?.client.id});
 			const isOwner = player.client.id === this.owner?.client?.id;
 			return `${player.name}${isOwner ? ' (owner)' : ''}`;
 		});
 
 		this.io.in(this.name).emit(`${CLIENT_EVENTS.JOIN}:${this.name}`, users);
+		return users;
 	}
 
 	getPlayersList() {
@@ -62,9 +62,9 @@ export class Game {
 		owner?.client?.emit?.(`${CLIENT_EVENTS.OWNER}:${this.name}`);
 	}
 
-	async removePlayer(conn: PoolConnection, client: Client): Promise<void> {
+	async removePlayer(conn: PoolConnection, client: Client): Promise<string[]> {
 		const currentPlayer = this.players.get(client.id);
-		if (this.started && (currentPlayer?.score ?? 0) > 0 && !currentPlayer?.isBot) {
+		if (this.started && (currentPlayer?.score ?? 0) > 0) {
 			try {
 				await conn.query(
 					'INSERT INTO red_tetris.scores (username, roomname, score, created) VALUES (?, ?, ?, now())',
@@ -82,7 +82,7 @@ export class Game {
 			this.setOwner([...this.players.values()][0]);
 		}
 
-		this.sendUsersList();
+		return this.sendUsersList();
 	}
 
 	stopInterval() {
@@ -121,11 +121,11 @@ export class Game {
 		}
 	}
 
-	addPlayer(username: string, isBot: boolean, client: Client): void {
-		const newPlayer = new Player(this.io, username, isBot, client, this);
+	addPlayer(username: string, client: Client): void {
+		const newPlayer = new Player(this.io, username, client, this);
 
 		client.join(this.name);
-		if (!isBot) client.join(`${this.name}${HUMAN_PREFIX}`);
+		client.join(`${this.name}${HUMAN_PREFIX}`);
 		if (this.players.size === 0 || this.owner?.client?.id === client.id) this.setOwner(newPlayer);
 
 		this.players.get(client.id)?.client?.clearListeners?.();
