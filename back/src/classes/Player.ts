@@ -5,7 +5,7 @@ import { Piece } from './Piece';
 import { Sequence } from './Sequence';
 import { Board, CLIENT_EVENTS, Sound } from '../../utils/constants';
 
-function emptyBoard(): number[][] {
+export function emptyBoard(): number[][] {
 	return new Array(20).fill(new Array(10).fill(0));
 }
 
@@ -43,7 +43,6 @@ export class Player {
 	private layer: Board;
 	private lines: number;
 	private addedLinesNextTurn: number;
-
 
 	constructor(io: Server, userName: string, client: Client, room: Game) {
 		this.io = io;
@@ -170,12 +169,12 @@ export class Player {
 			currentShape: this.currentShape,
 			nextShape,
 			board: this.board,
-			...({
-						scores: {
-							score: this.score,
-							lines: this.lines
-						}
-					}),
+			...{
+				scores: {
+					score: this.score,
+					lines: this.lines
+				}
+			},
 			indestructibleLines: this.addedLinesNextTurn
 		});
 	}

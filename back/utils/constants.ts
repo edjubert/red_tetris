@@ -1,7 +1,7 @@
 export const IO_EVENTS = {
 	CONNECTION: 'connection',
-	ROOM_LIST: 'roomList',
-}
+	ROOM_LIST: 'roomList'
+};
 
 export const SOCKET_EVENTS = {
 	GET_ROOM_DATA: 'getRoomData',
@@ -13,7 +13,7 @@ export const SOCKET_EVENTS = {
 	ERR_NOT_AUTHORIZED: 'notAuthorized',
 	ERR_USERNAME_ERROR: 'userNameError',
 	ERR_ROOMNAME_ERROR: 'roomNameError'
-}
+};
 
 export const CLIENT_EVENTS = {
 	START: 'start',
@@ -26,9 +26,18 @@ export const CLIENT_EVENTS = {
 	GAME_MODE: 'gameMode',
 	LEAVE: 'leaveRoom',
 	DISCONNECT: 'disconnect',
-	GAME_INFO: 'gameInfo',
-}
+	GAME_INFO: 'gameInfo'
+};
 
-export const HUMAN_PREFIX = '+human'
+export const HUMAN_PREFIX = '+human';
 export type Board = number[][];
-export type Sound = 'move' | 'rotate' | 'soft-drop' | 'hard-drop' | 'landing' | 'single' | 'double' | 'triple' | 'tetris';
+export type Sound =
+	| 'move'
+	| 'rotate'
+	| 'soft-drop'
+	| 'hard-drop'
+	| 'landing'
+	| 'single'
+	| 'double'
+	| 'triple'
+	| 'tetris';

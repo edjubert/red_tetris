@@ -70,7 +70,7 @@ export class Game {
 					[currentPlayer?.name, this.name, currentPlayer?.score]
 				);
 			} catch (e) {
-				logger.error(e)
+				logger.error(e);
 			}
 		}
 

@@ -1,38 +1,46 @@
 {
-  "name": "back",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "ts-node src/createServer.ts",
-    "dev": "nodemon",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "coverage": "vitest --run --coverage",
-    "coverage:watch": "vitest --coverage"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "mariadb": "^3.4.0",
-    "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0",
-    "socket.io": "^4.8.1",
-    "ws": "^8.18.0"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.8.7",
-    "@types/ws": "^8.5.13",
-    "@vitest/coverage-v8": "^2.1.8",
-    "nodemon": "^3.1.7",
-    "socket.io-mock-ts": "^1.0.2",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.8"
-  }
+	"name": "back",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "ts-node src/createServer.ts",
+		"dev": "nodemon",
+		"lint": "prettier --check . && eslint .",
+		"test": "vitest --run",
+		"test:watch": "vitest",
+		"coverage": "vitest --run --coverage",
+		"coverage:watch": "vitest --coverage"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"dotenv": "^16.4.5",
+		"express": "^4.21.1",
+		"mariadb": "^3.4.0",
+		"pino": "^9.5.0",
+		"pino-pretty": "^11.3.0",
+		"socket.io": "^4.8.1",
+		"ws": "^8.18.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.16.0",
+		"@types/eslint": "^9.6.1",
+		"@types/express": "^5.0.0",
+		"@types/node": "^22.8.7",
+		"@types/ws": "^8.5.13",
+		"@vitest/coverage-v8": "^2.1.8",
+		"eslint": "^9.16.0",
+		"eslint-config-prettier": "^9.1.0",
+		"globals": "^15.13.0",
+		"nodemon": "^3.1.7",
+		"prettier": "^3.4.2",
+		"socket.io-mock-ts": "^1.0.2",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.6.3",
+		"typescript-eslint": "^8.18.0",
+		"vitest": "^2.1.8"
+	}
 }
