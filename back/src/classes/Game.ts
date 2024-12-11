@@ -44,7 +44,6 @@ export class Game {
 
 	sendUsersList() {
 		const users = this.getPlayersList().map((player) => {
-			console.log({clientId: player.client.id, ownerId: this.owner?.client.id});
 			const isOwner = player.client.id === this.owner?.client?.id;
 			return `${player.name}${isOwner ? ' (owner)' : ''}`;
 		});

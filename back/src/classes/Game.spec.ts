@@ -2,6 +2,7 @@ import { describe, test, expect, it, vi } from 'vitest';
 import { Game } from './Game';
 import { Server } from 'socket.io';
 import { Client } from './Client';
+// @ts-ignore
 import { SocketServerMock } from 'socket.io-mock-ts';
 import mariadb, { PoolConnection } from 'mariadb';
 
@@ -11,7 +12,7 @@ vi.mock("mariadb", async () => {
 	return {
 		...actual,
 		default: {
-			createPool: () => (			 {
+			createPool: () => ({
 					getConnection: () => ({
 						query: vi.fn()
 					})
@@ -20,6 +21,15 @@ vi.mock("mariadb", async () => {
 		}
 	}
 })
+
+const addPlayerSocket = (socket: SocketServerMock, game: Game) => (name: string): void => {
+				socket.id = name;
+				const client = new Client(socket);
+
+				game.addPlayer(name, client);
+				expect(game.players.get(client.id)?.name).toBe(name);
+			}
+
 describe('Game', () => {
 	const gameName = "hello"
 	const gameMode = "slow"
@@ -46,27 +56,10 @@ describe('Game', () => {
 		const socket2 = new SocketServerMock();
 
 		test("addPlayer", () => {
-			let nbOfPlayers = 0;
-			socket1.on("addPlayer", (name: string): void => {
-				socket1.id = name;
-				const client = new Client(socket1);
-
-				game.addPlayer(name, client);
-				nbOfPlayers++;
-				expect(game.players.get(client.id)?.name).toBe(name);
-			})
-
+			socket1.on("addPlayer", addPlayerSocket(socket1, game))
 			socket1.clientMock.emit("addPlayer", "bob")
 
-			socket2.on("addPlayer", (name: string): void => {
-				socket2.id = name;
-				const client = new Client(socket2);
-
-				game.addPlayer(name, client);
-				nbOfPlayers++;
-				expect(game.players.get(client.id)?.name).toBe(name);
-			})
-
+			socket2.on("addPlayer", addPlayerSocket(socket2, game))
 			socket2.clientMock.emit("addPlayer", "john")
 		});
 
@@ -124,12 +117,93 @@ describe('Game', () => {
 	});
 
 	describe("game manager", () => {
+		const io = new Server({})
+		const game = new Game(io, gameName, gameMode)
+		const socket1 = new SocketServerMock();
+		const socket2 = new SocketServerMock();
+
 		test("already started", () => {
-			const io = new Server({})
-			const game = new Game(io, gameName, gameMode)
 			game.started = true;
 
 			game.launch();
+		});
+
+		test("applyEvent", () => {
+			game.started = false;
+			socket1.on("addPlayer", addPlayerSocket(socket1, game))
+			socket1.clientMock.emit("addPlayer", "bob")
+
+			socket2.on("addPlayer", addPlayerSocket(socket2, game))
+			socket2.clientMock.emit("addPlayer", "john")
+
+			game.launch();
+			expect(game["tickPerSeconds"]).toBe(0.25)
+		});
+
+		test("undefined gameMode", () => {
+			game.started = false;
+			game.gameMode = "anything";
+
+			game.launch()
+			expect(game["tickPerSeconds"]).toBe(2.5)
+		});
+
+		test("stopInterval", () => {
+			game.stopInterval();
+			expect(game["tickPerSeconds"]).toBe(0);
+		});
+
+		test("checkEndGame", () => {
+			game.started = true;
+			game.gameMode = "fast"
+			game.launch();
+			const players = game.getPlayersList();
+			players.forEach((player) => {
+				player.gameover = true;
+			});
+
+			game.checkEndGame(false)
+			expect(game["tickPerSeconds"]).toBe(0);
+			expect(game.gameOverList.length).toBe(0);
+			expect(game.players.size).toBe(2);
+			expect(game.owner?.client.id).toBe(players[0].client.id)
+		})
+	})
+
+	describe("makeIndestructibleLines", () => {
+		const io = new Server({})
+		const game = new Game(io, gameName, gameMode)
+		const socket1 = new SocketServerMock();
+		const socket2 = new SocketServerMock();
+
+		socket1.on("addPlayer", addPlayerSocket(socket1, game))
+		socket1.clientMock.emit("addPlayer", "bob")
+
+		socket2.on("addPlayer", addPlayerSocket(socket2, game))
+		socket2.clientMock.emit("addPlayer", "john")
+
+		test("nbLines = 0", () => {
+			const senderPlayer = game.getPlayersList()[0];
+			const otherPlayer = game.getPlayersList()[1];
+
+			game.makeIndestructibleLines(0, senderPlayer);
+			expect(otherPlayer["addedLinesNextTurn"]).toBe(0);
+		})
+
+		test("nbLines < 0", () => {
+			const senderPlayer = game.getPlayersList()[0];
+			const otherPlayer = game.getPlayersList()[1];
+
+			game.makeIndestructibleLines(-1, senderPlayer);
+			expect(otherPlayer["addedLinesNextTurn"]).toBe(0);
+		})
+
+		test("nbLines > 0", () => {
+			const senderPlayer = game.getPlayersList()[0];
+			const otherPlayer = game.getPlayersList()[1];
+
+			game.makeIndestructibleLines(3, senderPlayer);
+			expect(otherPlayer["addedLinesNextTurn"]).toBe(3);
 		})
 	})
 })
