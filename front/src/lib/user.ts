@@ -1,6 +1,7 @@
 import { type Writable, writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { io } from 'socket.io-client';
+
 import type { Socket } from 'socket.io-client';
 
 export const user: Writable<string> = writable();
@@ -9,7 +10,7 @@ export const connected: Writable<boolean> = writable(true);
 export let socket: Socket;
 export const muted: Writable<boolean> = writable(false);
 
-function writableLocalStorage(writable: Writable<string>, key: string) {
+export function writableLocalStorage(writable: Writable<string>, key: string) {
 	const value = localStorage.getItem(key);
 	if (value) {
 		writable.set(value);

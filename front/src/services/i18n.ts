@@ -3,7 +3,7 @@ import { derived } from 'svelte/store';
 
 const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
 
-const getLocale = (): string => {
+export const getLocale = (): string => {
 	const _locale = getLocaleFromNavigator();
 	switch (_locale) {
 		case 'fr':
