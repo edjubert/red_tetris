@@ -10,6 +10,8 @@ services:
     extends:
       service: backend
       file: ./back/compose.yml
+    env_file:
+      - ./back/.env
 
   frontend:
     depends_on:

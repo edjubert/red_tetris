@@ -11,6 +11,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log({
+	DBHOST: process.env.DB_HOST,
+	DBPORT: process.env.DB_PORT,
+	MARIADB_USER: process.env.MARIADB_USER,
+	MARIADB_PASSWORD: process.env.MARIADB_PASSWORD
+});
 const pool = mariadb.createPool({
 	host: process.env.DB_HOST || 'localhost',
 	port: +(process.env.DB_PORT || 3306),
@@ -36,9 +42,4 @@ export const createSocketServer = (io: Server) => {
 		}
 	});
 	return io;
-};
-
-export const startServer = async (io: Server, port: number) => {
-	io.listen(port);
-	logger.info(`Server listening on port ${port}`);
 };
