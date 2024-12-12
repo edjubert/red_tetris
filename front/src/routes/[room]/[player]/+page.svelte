@@ -21,7 +21,7 @@
 
 	const handleJoinRoom = (): void => {
 		if ($user !== data.player) goto('/', { state: { usernameError: 'username mismatch' } });
-		socket.emit('joinRoom', { roomname: data.room, user: $user, isBot: false });
+		socket.emit('joinRoom', { roomname: data.room, user: $user });
 		syncGameMode(undefined);
 	};
 
