@@ -11,12 +11,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log({
-	DBHOST: process.env.DB_HOST,
-	DBPORT: process.env.DB_PORT,
-	MARIADB_USER: process.env.MARIADB_USER,
-	MARIADB_PASSWORD: process.env.MARIADB_PASSWORD
-});
 const pool = mariadb.createPool({
 	host: process.env.DB_HOST || 'localhost',
 	port: +(process.env.DB_PORT || 3306),

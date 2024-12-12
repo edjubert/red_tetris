@@ -134,7 +134,7 @@ export class Player {
 		};
 
 		for (const key of keys) apply(key);
-		this.draw(newTetriminos);
+		this.draw();
 	}
 
 	sound(track: Sound): void {
@@ -198,7 +198,7 @@ export class Player {
 		}
 	}
 
-	draw(send: boolean = true): void {
+	draw(): void {
 		this.board = this.layer.map((row) => [...row]);
 
 		if (this.currentShape) {
@@ -206,7 +206,7 @@ export class Player {
 			this.board = this.currentShape.drawOn(this.board);
 		}
 
-		if (send) this.sendGameData();
+		this.sendGameData();
 	}
 
 	tick(): void {
@@ -215,6 +215,6 @@ export class Player {
 		const newTetriminos = !this?.currentShape?.tick?.(this.layer);
 		if (newTetriminos) this.newTetriminos();
 
-		this.draw(newTetriminos);
+		this.draw();
 	}
 }

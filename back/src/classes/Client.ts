@@ -16,29 +16,29 @@ export class Client {
 	}
 
 	join(roomname: string): void {
-		this.socket?.join(roomname);
+		this.socket.join(roomname);
 		this.rooms.push(roomname);
 	}
 
 	emit(emition: string, ...args: any[]): void {
-		this.socket?.emit(emition, ...args);
+		this.socket.emit(emition, ...args);
 	}
 
 	on(event: string, handler: any): void {
-		this.socket?.on(event, handler);
+		this.socket.on(event, handler);
 		this.listeners.push([event, handler]);
 	}
 
 	in(roomname: string) {
-		return this.socket?.in(roomname);
+		return this.socket.in(roomname);
 	}
 
 	removeAllListeners(event: string): void {
-		this.socket?.removeAllListeners(event);
+		this.socket.removeAllListeners(event);
 	}
 
 	clearListeners(): void {
-		for (const [event, handler] of this.listeners) this.socket?.removeListener(event, handler);
-		for (const room of this.rooms) this.socket?.leave(room);
+		for (const [event, handler] of this.listeners) this.socket.removeListener(event, handler);
+		for (const room of this.rooms) this.socket.leave(room);
 	}
 }
