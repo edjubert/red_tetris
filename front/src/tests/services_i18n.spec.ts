@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { getLocale, setupI18n } from './i18n';
+import { getLocale, setupI18n } from '../services/i18n';
 
 describe('i18n', () => {
 	describe('getLocale', () => {

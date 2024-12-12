@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { _ } from '../../../services/i18n';
-	import { muted, socket, user } from '$lib/user';
+	import { muted, user } from '$lib/user';
+	import { socket } from '$lib/user_browser';
 	import ButtonLeave from '../../../components/ButtonLeave.svelte';
 	import ButtonRestart from '../../../components/ButtonRestart.svelte';
 	import Listener from '$lib/Listener.svelte';

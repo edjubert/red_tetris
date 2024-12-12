@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
-	import { socket } from '$lib/user';
+	import { socket } from '$lib/user_browser';
 	import type { ListenerHandler } from '$lib/types';
 
 	export let on: string;

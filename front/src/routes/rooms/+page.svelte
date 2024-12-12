@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { user, socket } from '$lib/user';
+	import { user } from '$lib/user';
+	import { socket } from '$lib/user_browser';
 	import { _ } from '../../services/i18n';
 	import { goto } from '$app/navigation';
 	import Input from '$lib/Input.svelte';
@@ -32,7 +33,7 @@
 		socket.emit('getScoresList', $user);
 
 		roominput.focus();
-		roominput.setError(history.state.roomnameError);
+		roominput.setError(history.state?.roomnameError);
 	});
 </script>
 

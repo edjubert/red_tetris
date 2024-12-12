@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, expect, test, vi } from 'vitest';
-import { connected, muted, room, socket, user, writableLocalStorage } from '$lib/user';
+import { connected, muted, room, user, writableLocalStorage } from '$lib/user';
 
 describe('user', () => {
 	test('user', () => {
@@ -10,9 +10,6 @@ describe('user', () => {
 	});
 	test('connected', () => {
 		expectTypeOf(connected).toBeObject();
-	});
-	test('socket', () => {
-		expectTypeOf(socket).toBeObject();
 	});
 	test('muted', () => {
 		expectTypeOf(muted).toBeObject();
@@ -34,6 +31,6 @@ describe('user', () => {
 	});
 	test('writableLocalStorage', () => {
 		writableLocalStorage(user, 'key');
-		expect(setItem.mock.calls.length).toBe(3);
+		expect(setItem.mock.calls.length).toBe(2);
 	});
 });

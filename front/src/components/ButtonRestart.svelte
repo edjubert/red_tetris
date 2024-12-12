@@ -1,5 +1,5 @@
 <script>
-	import { socket } from '$lib/user';
+	import { socket } from '$lib/user_browser';
 	import { _ } from '../services/i18n';
 
 	let { roomname } = $props();

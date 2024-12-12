@@ -1,13 +1,8 @@
 import { type Writable, writable } from 'svelte/store';
-import { browser } from '$app/environment';
-import { io } from 'socket.io-client';
-
-import type { Socket } from 'socket.io-client';
 
 export const user: Writable<string> = writable();
 export const room: Writable<string> = writable();
 export const connected: Writable<boolean> = writable(true);
-export let socket: Socket;
 export const muted: Writable<boolean> = writable(false);
 
 export function writableLocalStorage(writable: Writable<string>, key: string) {
@@ -23,15 +18,4 @@ export function writableLocalStorage(writable: Writable<string>, key: string) {
 
 		localStorage.setItem(key, value);
 	});
-}
-
-if (browser) {
-	writableLocalStorage(user as Writable<never>, 'user');
-	writableLocalStorage(room as Writable<never>, 'room');
-	writableLocalStorage(muted as Writable<never>, 'muted');
-
-	socket = io('http://localhost:4000', { transports: ['websocket'] });
-	socket.on('connect', () => connected.set(true));
-	socket.on('connect_error', () => connected.set(false));
-	socket.on('disconnect', () => connected.set(false));
 }

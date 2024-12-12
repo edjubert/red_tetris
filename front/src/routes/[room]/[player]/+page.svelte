@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { socket, user } from '$lib/user';
+	import { user } from '$lib/user';
+	import { socket } from '$lib/user_browser';
 	import { onMount } from 'svelte';
 	import Listener from '$lib/Listener.svelte';
 	import { goto } from '$app/navigation';
