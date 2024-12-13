@@ -86,6 +86,19 @@ This project implements themes from [Catppuccin](https://catppuccin.com/)
 
 ![image](https://github.com/user-attachments/assets/4ce4d6d1-fc60-4ad4-aa12-425627d781dc)
 
+### Latte
+![image](https://github.com/user-attachments/assets/032f73d4-e5b2-43cc-8569-2a2c8bc7800f)
+
+![image](https://github.com/user-attachments/assets/16dcef6c-897f-4791-af0b-6d5db6942564)
+
+![image](https://github.com/user-attachments/assets/ee25a8c8-36d1-4b11-8e6d-140619bbe22c)
+
+![image](https://github.com/user-attachments/assets/fbc64e31-e1e1-43a7-8f6d-ff3ce597e6f8)
+
+![image](https://github.com/user-attachments/assets/433adc1d-43b7-4a00-9051-2710bef564c3)
+
+
 ## Author
 edjubert <edjubert@student.42.fr>
+
 fldoucet <fldoucet@student.42.fr>
