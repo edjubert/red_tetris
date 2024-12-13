@@ -50,6 +50,7 @@ docker compose up
 Go to http://localhost:4173
 
 ## Gallery
+This project implements themes from [Catppuccin](https://catppuccin.com/)
 ### Mocha
 ![image](https://github.com/user-attachments/assets/7d70c409-7be4-4886-987a-e1a31af67174)
 
@@ -66,15 +67,24 @@ Go to http://localhost:4173
 
 ![image](https://github.com/user-attachments/assets/bc8b8bf7-9307-42bc-a776-75d4c2a4717f)
 
-![image](https://github.com/user-attachments/assets/8c57abb9-9f0a-4cc4-be68-55a725c62a9b)
-
 ![image](https://github.com/user-attachments/assets/1ebca906-1617-4d0a-ad12-e08fcad57cdc)
+
+![image](https://github.com/user-attachments/assets/8c57abb9-9f0a-4cc4-be68-55a725c62a9b)
 
 ![image](https://github.com/user-attachments/assets/3f033c09-574b-4c8b-984a-4d03a8806b01)
 
+### Frappe
+![image](https://github.com/user-attachments/assets/5908ae08-7fae-4768-a6af-81a0cee49a2d)
 
+![image](https://github.com/user-attachments/assets/285653ae-6509-40f5-bccb-a3f6a4c9d5ac)
 
+![image](https://github.com/user-attachments/assets/46d287db-e72f-4378-9e5a-f37c1ccdcc1f)
 
+![image](https://github.com/user-attachments/assets/e617c5f6-a3e2-4e25-b4f9-cef8b7fe5d07)
+
+![image](https://github.com/user-attachments/assets/7fbc951f-94b7-44ca-bffb-372fd2108a10)
+
+![image](https://github.com/user-attachments/assets/4ce4d6d1-fc60-4ad4-aa12-425627d781dc)
 
 ## Author
 edjubert <edjubert@student.42.fr>
