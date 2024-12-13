@@ -49,6 +49,26 @@ docker compose up
 
 Go to http://localhost:4173
 
+## Gallery
+### Mocha
+![image](https://github.com/user-attachments/assets/7d70c409-7be4-4886-987a-e1a31af67174)
+
+![image](https://github.com/user-attachments/assets/c2dd7556-4ab0-4af4-94f7-f515e8bfb5bd)
+
+![image](https://github.com/user-attachments/assets/ac6c9b32-9103-4e24-97f8-d90e3dff47dd)
+
+![image](https://github.com/user-attachments/assets/6dce23f6-22c4-40b6-837c-6699bdaf1203)
+
+![image](https://github.com/user-attachments/assets/c776e104-f7c2-46b4-8835-1af3b0040541)
+
+![image](https://github.com/user-attachments/assets/f6e842de-b8b5-4c11-8a7c-f7de28926831)
+
+### Macchiato
+![image](https://github.com/user-attachments/assets/3a0e33c7-12a4-4ae9-ae66-69f0ff902ea4)
+
+
+
+
 ## Author
 edjubert <edjubert@student.42.fr>
 fldoucet <fldoucet@student.42.fr>
