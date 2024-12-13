@@ -66,6 +66,8 @@ Go to http://localhost:4173
 
 ![image](https://github.com/user-attachments/assets/bc8b8bf7-9307-42bc-a776-75d4c2a4717f)
 
+![image](https://github.com/user-attachments/assets/8c57abb9-9f0a-4cc4-be68-55a725c62a9b)
+
 ![image](https://github.com/user-attachments/assets/1ebca906-1617-4d0a-ad12-e08fcad57cdc)
 
 ![image](https://github.com/user-attachments/assets/3f033c09-574b-4c8b-984a-4d03a8806b01)
