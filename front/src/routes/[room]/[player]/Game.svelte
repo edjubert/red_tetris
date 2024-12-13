@@ -31,6 +31,9 @@
 	let endPlayerList: Score[] = [];
 	let isEndGame = false;
 
+	let tetrisTheme = new window.Audio(`/sound/tetris.mp3`);
+	tetrisTheme.loop = true;
+
 	function handleConnect() {
 		socket.emit('initgame', roomname);
 	}
@@ -83,6 +86,15 @@
 		}
 	};
 
+	const handleTetrisTheme = () => {
+		if (browser && !$muted) {
+			tetrisTheme.play();
+		}
+		if (browser && $muted) {
+			tetrisTheme.pause();
+		}
+	};
+
 	onMount(() => {
 		if (!roomname) goto('/rooms');
 		handleConnect();
@@ -100,17 +112,23 @@
 <Listener handler={handleSound} on="sound:{roomname}" />
 
 <main>
-	<button class="mute-button" on:click={() => muted.set(!$muted)}>
+	<button
+		class="mute-button"
+		on:click={() => {
+			muted.set(!$muted);
+			handleTetrisTheme();
+		}}
+	>
 		<img src={`/icons/${$muted ? 'no-sound.png' : 'sound.png'}`} alt="sound" />
 	</button>
 
 	<aside class="others">
-		{#each [...usersBoard.entries()] as [_, { username, heights, scores, gameover }]}
+		{#each [...usersBoard.entries()] as x}
 			<div class="card">
-				{username}<br />
-				{scores.score}
-				<div class="small-board {gameover ? 'small-gameover' : ''}">
-					{#each heights as height}
+				{x[1].username}<br />
+				{x[1].scores.score}
+				<div class="small-board {x[1].gameover ? 'small-gameover' : ''}">
+					{#each x[1].heights as height}
 						<div style="height: {(height / 20) * 100}%"></div>
 					{/each}
 				</div>
