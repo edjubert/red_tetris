@@ -98,6 +98,12 @@
 	onMount(() => {
 		if (!roomname) goto('/rooms');
 		handleConnect();
+
+		handleTetrisTheme();
+
+		return () => {
+			tetrisTheme.pause();
+		};
 	});
 </script>
 
