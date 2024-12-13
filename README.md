@@ -57,14 +57,19 @@ Go to http://localhost:4173
 
 ![image](https://github.com/user-attachments/assets/ac6c9b32-9103-4e24-97f8-d90e3dff47dd)
 
-![image](https://github.com/user-attachments/assets/6dce23f6-22c4-40b6-837c-6699bdaf1203)
-
 ![image](https://github.com/user-attachments/assets/c776e104-f7c2-46b4-8835-1af3b0040541)
 
 ![image](https://github.com/user-attachments/assets/f6e842de-b8b5-4c11-8a7c-f7de28926831)
 
 ### Macchiato
 ![image](https://github.com/user-attachments/assets/3a0e33c7-12a4-4ae9-ae66-69f0ff902ea4)
+
+![image](https://github.com/user-attachments/assets/bc8b8bf7-9307-42bc-a776-75d4c2a4717f)
+
+![image](https://github.com/user-attachments/assets/1ebca906-1617-4d0a-ad12-e08fcad57cdc)
+
+![image](https://github.com/user-attachments/assets/3f033c09-574b-4c8b-984a-4d03a8806b01)
+
 
 
 
