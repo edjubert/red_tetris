@@ -138,7 +138,7 @@ describe('Game', () => {
 			socket2.clientMock.emit('addPlayer', 'john');
 
 			game.launch();
-			expect(game['tickPerSeconds']).toBe(0.25);
+			expect(game['tickPerSeconds']).toBe(0.5);
 		});
 
 		test('undefined gameMode', () => {
@@ -146,7 +146,7 @@ describe('Game', () => {
 			game.gameMode = 'anything';
 
 			game.launch();
-			expect(game['tickPerSeconds']).toBe(2.5);
+			expect(game['tickPerSeconds']).toBe(1);
 		});
 
 		test('stopInterval', () => {
