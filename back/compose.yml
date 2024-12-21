@@ -9,14 +9,14 @@ services:
       - '4000:4000'
 
   mariadb:
-    image: mariadb:latest
+    build:
+      context: database
+      dockerfile: Dockerfile
     restart: always
     ports:
       - '3306:3306'
     env_file:
       - .env
-    volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   red_tetris_db:
