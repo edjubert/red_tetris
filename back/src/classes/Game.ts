@@ -148,10 +148,10 @@ export class Game {
 			});
 
 			const ticks: { [key: GameMode]: number } = {
-				fast: 13,
-				'medium-fast': 6,
-				'medium-slow': 2.5,
-				slow: 0.25
+				fast: 4,
+				'medium-fast': 2,
+				'medium-slow': 1,
+				slow: 0.5
 			};
 
 			if (
