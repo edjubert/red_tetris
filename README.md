@@ -49,6 +49,39 @@ docker compose up
 
 Go to http://localhost:4173
 
+## Bonuses
+We've implemented some bonuses:
+
+### Sound
+During a game, every keyboard action leads to a haptic sound.
+And of course, the famous Tetris theme.
+
+### Theme
+This project implements all themes from [Catppuccin](https://catppuccin.com/)
+Feel free to choose your favorite flavor
+
+### Level difficulty
+Want to go hardcore? Prefer go smooth?
+The choice is yours and depends on your mood or your opponent's one.
+
+### Score
+You've been through hell, succeeded to play hours without loosing but there is no score?
+Hell no, not under our watch.
+We've implemented scoring because your awesomeness deserves it.
+
+### Leaderboard
+You now have an awesome score, let the world knows it and print it on the leaderboard.
+Let the champions battle begins.
+
+### Data persistence
+With all those marvelous scores, you don't want to lose it all if the server restarts.
+That's why we've implemented a MariaDB to keep your score safe.
+
+### Linted code base
+It's a good practice and make the code more consistent and easy to read.
+You're welcome.
+
+
 ## Gallery
 This project implements themes from [Catppuccin](https://catppuccin.com/)
 ### Mocha
