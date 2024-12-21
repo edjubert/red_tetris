@@ -10,6 +10,7 @@ services:
 
   mariadb:
     image: mariadb:latest
+    restart: always
     ports:
       - '3306:3306'
     env_file:
